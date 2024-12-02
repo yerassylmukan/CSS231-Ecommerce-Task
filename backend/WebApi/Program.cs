@@ -1,5 +1,6 @@
 using System.Text;
 using ApplicationCore.Constants;
+using ApplicationCore.Contracts;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -11,15 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
 
+builder.Services.AddScoped<ITokenClaimsService, IdentityTokenClaimService>();
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppIdentityDbContext>()
     .AddDefaultTokenProviders();
 
 var key = Encoding.ASCII.GetBytes(AuthorizationConstants.JWT_SECRET_KEY);
-builder.Services.AddAuthentication(config =>
-    {
-        config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+builder.Services.AddAuthentication(config => { config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; })
     .AddJwtBearer(config =>
     {
         config.RequireHttpsMetadata = false;
@@ -34,8 +34,6 @@ builder.Services.AddAuthentication(config =>
     });
 
 var app = builder.Build();
-
-app.MapGet("api/", () => "Hello World!");
 
 using (var scope = app.Services.CreateScope())
 {
