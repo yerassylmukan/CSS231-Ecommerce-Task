@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Identity;
+﻿namespace ApplicationCore.Common.Exceptions;
 
 public class UserNotFoundException : Exception
 {

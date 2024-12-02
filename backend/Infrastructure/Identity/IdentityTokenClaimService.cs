@@ -1,8 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ApplicationCore.Common.Contracts;
+using ApplicationCore.Common.Exceptions;
 using ApplicationCore.Constants;
-using ApplicationCore.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 

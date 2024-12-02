@@ -1,4 +1,4 @@
-﻿namespace ApplicationCore.Contracts;
+﻿namespace ApplicationCore.Common.Contracts;
 
 public interface ITokenClaimsService
 {
