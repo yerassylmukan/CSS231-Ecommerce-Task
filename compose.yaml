@@ -3,22 +3,6 @@
     driver: bridge
 
 services:
-  webapi:
-    image: webapi
-    build:
-      context: .
-      dockerfile: backend/WebApi/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - DefaultConnection=Server=db;Port=5432;Database=shop;User Id=postgres;Password=pass1234sdu;Include Error Detail=True;
-      - ASPNETCORE_URLS=http://+:80
-    ports:
-      - "5200:80"
-    depends_on:
-      - db
-    networks:
-      - dev
-  
   db:
     image: postgres:latest
     restart: always
@@ -28,5 +12,33 @@ services:
       - POSTGRES_DB=shop
     ports:
       - "5432:5432"
+    networks:
+      - dev
+
+  identity:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass1234sdu
+      - POSTGRES_DB=identity
+    ports:
+      - "5433:5432"
+    networks:
+      - dev
+  
+  webapi:
+    image: webapi
+    build:
+      context: .
+      dockerfile: backend/WebApi/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5200:80"
+    depends_on:
+      - db
+      - identity
     networks:
       - dev
