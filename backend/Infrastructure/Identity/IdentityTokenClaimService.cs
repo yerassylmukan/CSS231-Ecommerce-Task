@@ -1,9 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ApplicationCore.Common.Contracts;
-using ApplicationCore.Common.Exceptions;
 using ApplicationCore.Constants;
+using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -21,7 +20,7 @@ public class IdentityTokenClaimService : ITokenClaimsService
     public async Task<string> GetTokenAsync(string userName)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(AuthorizationConstants.JWT_SECRET_KEY);
+        var key = Encoding.ASCII.GetBytes(JwtSettings.KEY);
         var user = await _userManager.FindByNameAsync(userName);
         if (user == null) throw new UserNotFoundException(userName);
         var roles = await _userManager.GetRolesAsync(user);

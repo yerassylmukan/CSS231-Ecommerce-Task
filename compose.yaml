@@ -1,32 +1,4 @@
-﻿networks:
-  dev:
-    driver: bridge
-
-services:
-  db:
-    image: postgres:latest
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=pass1234sdu
-      - POSTGRES_DB=shop
-    ports:
-      - "5432:5432"
-    networks:
-      - dev
-
-  identity:
-    image: postgres:latest
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=pass1234sdu
-      - POSTGRES_DB=identity
-    ports:
-      - "5433:5432"
-    networks:
-      - dev
-  
+﻿services:
   webapi:
     image: webapi
     build:
@@ -40,5 +12,23 @@ services:
     depends_on:
       - db
       - identity
-    networks:
-      - dev
+  
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass1234sdu
+      - POSTGRES_DB=shop
+    ports:
+      - "5432:5432"
+
+  identity:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass1234sdu
+      - POSTGRES_DB=identity
+    ports:
+      - "5433:5432"

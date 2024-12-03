@@ -1,4 +1,4 @@
-﻿namespace ApplicationCore.Common.Contracts;
+﻿namespace ApplicationCore.Interfaces;
 
 public interface IEmailSender
 {

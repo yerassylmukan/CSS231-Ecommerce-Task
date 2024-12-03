@@ -1,4 +1,4 @@
-﻿using ApplicationCore.Common.Contracts;
+﻿using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
