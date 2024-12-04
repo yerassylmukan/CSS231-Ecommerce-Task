@@ -12,6 +12,10 @@ using WebApi;
 using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+// To ensure that webapi successfully connects to the databases (db and identity),
+// I set a delay of 5 seconds to avoid errors during migration.
+// Docker depends_on does not wait for dependent containers to be fully ready to accept connections.
+await Task.Delay(5000); 
 
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
