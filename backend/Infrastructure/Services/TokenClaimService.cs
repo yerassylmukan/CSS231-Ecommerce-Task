@@ -2,17 +2,19 @@
 using System.Security.Claims;
 using System.Text;
 using ApplicationCore.Constants;
+using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Infrastructure.Identity;
+namespace Infrastructure.Services;
 
-public class IdentityTokenClaimService : ITokenClaimsService
+public class TokenClaimService : ITokenClaimsService
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public IdentityTokenClaimService(UserManager<ApplicationUser> userManager)
+    public TokenClaimService(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
@@ -24,7 +26,11 @@ public class IdentityTokenClaimService : ITokenClaimsService
         var user = await _userManager.FindByNameAsync(userName);
         if (user == null) throw new UserNotFoundException(userName);
         var roles = await _userManager.GetRolesAsync(user);
-        var claims = new List<Claim> { new(ClaimTypes.Name, userName) };
+        var claims = new List<Claim> 
+        { 
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, userName)
+        };
 
         foreach (var role in roles) claims.Add(new Claim(ClaimTypes.Role, role));
 

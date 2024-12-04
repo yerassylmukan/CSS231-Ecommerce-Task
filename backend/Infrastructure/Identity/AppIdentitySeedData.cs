@@ -23,8 +23,8 @@ public class AppIdentitySeedData
         string adminUserName = "admin@gmail.com";
         var adminUser = new ApplicationUser
         {
-            UserName = "admin",
-            Email = "admin@gmail.com",
+            UserName = adminUserName,
+            Email = adminUserName,
             FirstName = "Admin",
             LastName = "Admin",
             ProfilePictureUrl = "urlToPhoto"
