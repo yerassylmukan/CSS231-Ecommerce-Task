@@ -44,6 +44,12 @@ public class ExceptionHandlingMiddleware
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             await httpContext.Response.WriteAsync(ex.Message);
         }
+        catch (RoleDoesNotExistException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred.");
