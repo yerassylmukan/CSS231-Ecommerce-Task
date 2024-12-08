@@ -15,7 +15,8 @@ public class EmailSenderController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> SendEmailAsync(string email, string subject, string message, CancellationToken cancellationToken)
+    public async Task<IActionResult> SendEmailAsync(string email, string subject, string message,
+        CancellationToken cancellationToken)
     {
         await _emailSender.EmailSendAsync(email, subject, message, cancellationToken);
         return Ok();

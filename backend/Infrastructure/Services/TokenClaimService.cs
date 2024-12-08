@@ -26,9 +26,9 @@ public class TokenClaimService : ITokenClaimsService
         var user = await _userManager.FindByNameAsync(userName);
         if (user == null) throw new UserNotFoundException(userName);
         var roles = await _userManager.GetRolesAsync(user);
-        var claims = new List<Claim> 
-        { 
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id),
             new(ClaimTypes.Name, userName)
         };
 

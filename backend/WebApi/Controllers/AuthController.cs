@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 
@@ -16,17 +17,18 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> Register([FromBody] RegisterRequestModel registerRequest, CancellationToken cancellationToken)
+    public async Task<ActionResult<string>> Register([FromBody] RegisterRequestModel registerRequest,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        
+
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
         var token = await _identityService.CreateUserAsync(registerRequest.Email, registerRequest.Password,
             registerRequest.FirstName, registerRequest.LastName, registerRequest.Email);
-        
+
         return Ok(token);
     }
 
@@ -36,31 +38,34 @@ public class AuthController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        
+
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
-        
+
         var token = await _identityService.AuthenticateUserAsync(login.Email, login.Password);
-        
+
         return Ok(token);
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,UserManager")]
     public async Task<ActionResult<string>> AddUserToRoles([FromBody] AddUserToRolesModel addUserToRolesModel)
     {
         var newToken = await _identityService.AddUserToRolesAsync(addUserToRolesModel.Email, addUserToRolesModel.Roles);
-        
+
         return Ok(newToken);
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> RequestPasswordReset([FromBody] RequestPasswordResetModel requestPasswordResetModel)
+    public async Task<IActionResult> RequestPasswordReset(
+        [FromBody] RequestPasswordResetModel requestPasswordResetModel)
     {
-        await _identityService.SendPasswordResetTokenAsync(requestPasswordResetModel.Email, requestPasswordResetModel.LinkToResetPassword);
+        await _identityService.SendPasswordResetTokenAsync(requestPasswordResetModel.Email,
+            requestPasswordResetModel.LinkToResetPassword);
         return Ok("Password reset link sent.");
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel resetPassword)
     {
         await _identityService.ResetPasswordAsync(resetPassword.Email, resetPassword.Token, resetPassword.NewPassword);

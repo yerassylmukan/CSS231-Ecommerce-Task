@@ -5,8 +5,8 @@ namespace WebApi.Middleware;
 
 public class ExceptionHandlingMiddleware
 {
-    private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+    private readonly RequestDelegate _next;
 
     public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
     {
@@ -41,10 +41,22 @@ public class ExceptionHandlingMiddleware
         catch (UnauthorizedAccessException ex)
         {
             _logger.LogError(ex, ex.Message);
-            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             await httpContext.Response.WriteAsync(ex.Message);
         }
         catch (RoleDoesNotExistException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (ArgumentException ex)
         {
             _logger.LogError(ex, ex.Message);
             httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;

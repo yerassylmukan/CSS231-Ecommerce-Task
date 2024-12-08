@@ -1,7 +1,5 @@
 ﻿using System.Security.Claims;
-using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -14,10 +12,7 @@ public class TestController : ControllerBase
     public string GetCurrentUserId()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-        {
-            Console.WriteLine("No user found or user is not authenticated.");
-        }
+        if (string.IsNullOrEmpty(userId)) Console.WriteLine("No user found or user is not authenticated.");
         return userId;
     }
 

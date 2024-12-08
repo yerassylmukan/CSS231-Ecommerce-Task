@@ -15,14 +15,15 @@ var builder = WebApplication.CreateBuilder(args);
 // To ensure that webapi successfully connects to the databases (db and identity),
 // I set a delay of 5 seconds to avoid errors during migration.
 // Docker depends_on does not wait for dependent containers to be fully ready to accept connections.
-await Task.Delay(5000); 
+await Task.Delay(5000);
 
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
 
 builder.Services.AddScoped<ITokenClaimsService, TokenClaimService>();
-builder.Services.AddTransient<IEmailSender, EmailSender>();
-builder.Services.AddTransient<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppIdentityDbContext>()
@@ -65,7 +66,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -77,8 +78,7 @@ builder.Services.AddSwaggerGen(c =>
                 },
                 Scheme = "oauth2",
                 Name = "Bearer",
-                In = ParameterLocation.Header,
-
+                In = ParameterLocation.Header
             },
             new List<string>()
         }
@@ -96,7 +96,7 @@ using (var scope = app.Services.CreateScope())
         var identityContext = services.GetRequiredService<AppIdentityDbContext>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        
+
         await AppIdentitySeedData.SeedAsync(identityContext, userManager, roleManager);
     }
     catch (Exception e)
@@ -116,13 +116,12 @@ app.UseAuthorization();
 
 app.UseSwagger();
 
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-});
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 
 app.MapControllers();
 
 app.Run();
 
-public partial class Program { }
+public partial class Program
+{
+}

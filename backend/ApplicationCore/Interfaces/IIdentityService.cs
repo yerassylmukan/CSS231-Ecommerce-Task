@@ -2,7 +2,9 @@
 
 public interface IIdentityService
 {
-    Task<string> CreateUserAsync(string email, string password, string firstName, string lastName, string profilePictureUrl);
+    Task<string> CreateUserAsync(string email, string password, string firstName, string lastName,
+        string profilePictureUrl);
+
     Task<string> AuthenticateUserAsync(string email, string password);
     Task<string> AddUserToRolesAsync(string email, IEnumerable<string> roles);
     Task SendPasswordResetTokenAsync(string email, string linkToResetPassword);

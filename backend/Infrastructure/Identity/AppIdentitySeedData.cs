@@ -1,5 +1,4 @@
-﻿using ApplicationCore.Constants;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Identity;
@@ -9,10 +8,7 @@ public class AppIdentitySeedData
     public static async Task SeedAsync(AppIdentityDbContext dbContext, UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager)
     {
-        if (dbContext.Database.IsNpgsql())
-        {
-            dbContext.Database.Migrate();
-        }
+        if (dbContext.Database.IsNpgsql()) dbContext.Database.Migrate();
 
         await EnsureRoleExistsAsync(roleManager, "Admin");
         await EnsureRoleExistsAsync(roleManager, "BasicUser");
@@ -20,7 +16,7 @@ public class AppIdentitySeedData
         await EnsureRoleExistsAsync(roleManager, "OrderManager");
         await EnsureRoleExistsAsync(roleManager, "UserManager");
 
-        string adminUserName = "admin@gmail.com";
+        var adminUserName = "admin@gmail.com";
         var adminUser = new ApplicationUser
         {
             UserName = adminUserName,
@@ -39,10 +35,6 @@ public class AppIdentitySeedData
 
     private static async Task EnsureRoleExistsAsync(RoleManager<IdentityRole> roleManager, string roleName)
     {
-        if (!await roleManager.RoleExistsAsync(roleName))
-        {
-            await roleManager.CreateAsync(new IdentityRole(roleName));
-        }
+        if (!await roleManager.RoleExistsAsync(roleName)) await roleManager.CreateAsync(new IdentityRole(roleName));
     }
-
 }

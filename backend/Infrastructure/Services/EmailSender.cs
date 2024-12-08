@@ -6,8 +6,8 @@ namespace Infrastructure.Services;
 
 public class EmailSender : IEmailSender
 {
-    private readonly SmtpClient _smtpClient;
     private readonly string _fromAddress;
+    private readonly SmtpClient _smtpClient;
 
     public EmailSender()
     {
@@ -19,7 +19,8 @@ public class EmailSender : IEmailSender
         };
     }
 
-    public async Task EmailSendAsync(string recipientEmail, string subject, string message, CancellationToken cancellationToken)
+    public async Task EmailSendAsync(string recipientEmail, string subject, string message,
+        CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(recipientEmail))
             throw new ArgumentException("Recipient email cannot be null or empty.", nameof(recipientEmail));
@@ -29,24 +30,12 @@ public class EmailSender : IEmailSender
             IsBodyHtml = true
         };
 
-        try
-        {
-            var sendEmailTask = _smtpClient.SendMailAsync(mailMessage, cancellationToken);
-            await Task.WhenAny(sendEmailTask, Task.Delay(Timeout.Infinite, cancellationToken));
+        var sendEmailTask = _smtpClient.SendMailAsync(mailMessage, cancellationToken);
+        await Task.WhenAny(sendEmailTask, Task.Delay(Timeout.Infinite, cancellationToken));
 
-            if (cancellationToken.IsCancellationRequested)
-                throw new OperationCanceledException("Email sending was canceled.");
+        if (cancellationToken.IsCancellationRequested)
+            throw new OperationCanceledException("Email sending was canceled.");
 
-            await sendEmailTask;
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error sending email: {ex.Message}");
-            throw new Exception("Failed to send email. See inner exception for details.", ex);
-        }
+        await sendEmailTask;
     }
 }
