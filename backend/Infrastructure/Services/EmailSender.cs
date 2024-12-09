@@ -14,7 +14,7 @@ public class EmailSender : IEmailSender
         _fromAddress = "230107009@sdu.edu.com";
         _smtpClient = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
         {
-            Credentials = new NetworkCredential("ca19a9b422b017", "701a17f3157fcc"),
+            Credentials = new NetworkCredential("12096a451ed134", "e552d1377a8b96"),
             EnableSsl = true
         };
     }
