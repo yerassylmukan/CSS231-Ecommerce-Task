@@ -2,8 +2,6 @@
 
 public interface IApplicationUserService
 {
-    Task<string?> GetUserNameAsync(string userId);
-
     Task<(string UserId, string FirstName, string LastName, string UserName, string Email, string profilePictureUrl,
             IEnumerable<string> Roles)>
         GetUserDetailsByUserNameAsync(string userName);

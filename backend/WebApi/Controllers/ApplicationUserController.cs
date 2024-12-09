@@ -19,13 +19,6 @@ public class ApplicationUserController : ControllerBase
         _service = service;
     }
 
-    [HttpGet("{userId}")]
-    public async Task<ActionResult<ApplicationUser>> GetUserAsync(string userId)
-    {
-        var userName = _service.GetUserNameAsync(userId);
-        return Ok(userName);
-    }
-
     [HttpGet("{userName}")]
     public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByUserName(string userName,
         CancellationToken cancellationToken)
@@ -107,8 +100,8 @@ public class ApplicationUserController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> UpdateProfileInformation([FromBody] UpdateProfileInformationModel model,
+    [HttpPost("{userId}")]
+    public async Task<IActionResult> UpdateProfileInformation(string userId, [FromBody] UpdateProfileInformationModel model,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -117,7 +110,7 @@ public class ApplicationUserController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateProfileInformationAsync(model.UserId, model.FirstName, model.LastName, model.Email,
+        await _service.UpdateProfileInformationAsync(userId, model.FirstName, model.LastName, model.Email,
             model.ProfilePictureUrl);
         return Ok();
     }
