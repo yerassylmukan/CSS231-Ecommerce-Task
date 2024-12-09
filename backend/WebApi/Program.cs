@@ -85,6 +85,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddCors(options =>
+    options.AddPolicy("CorsPolicy", policyBuilder => { policyBuilder.WithOrigins("http://localhost:3000"); }));
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -110,6 +113,8 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();

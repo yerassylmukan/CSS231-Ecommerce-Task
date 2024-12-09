@@ -27,14 +27,15 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpGet("{userName}")]
-    public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByUserName(string userName, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByUserName(string userName,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
-        
+
         var (userId, firstName, lastName, applicationUserName, email, profilePictureUrl, roles) =
             await _service.GetUserDetailsByUserNameAsync(userName);
 
@@ -53,14 +54,15 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpGet("{email}")]
-    public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByEmail(string email, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByEmail(string email,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
-        
+
         var (userId, firstName, lastName, userName, applicationEmail, profilePictureUrl, roles) =
             await _service.GetUserDetailsByEmailAsync(email);
 
@@ -79,14 +81,15 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByUserId(string userId, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByUserId(string userId,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
-        
+
         var (applicationUserId, firstName, lastName, userName, email, profilePictureUrl, roles) =
             await _service.GetUserDetailsByUserIdAsync(userId);
 
@@ -105,14 +108,15 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateProfileInformation([FromBody] UpdateProfileInformationModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateProfileInformation([FromBody] UpdateProfileInformationModel model,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
-        
+
         await _service.UpdateProfileInformationAsync(model.UserId, model.FirstName, model.LastName, model.Email,
             model.ProfilePictureUrl);
         return Ok();
