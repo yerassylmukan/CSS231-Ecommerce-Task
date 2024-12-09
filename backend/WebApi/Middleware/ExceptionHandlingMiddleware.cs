@@ -59,7 +59,13 @@ public class ExceptionHandlingMiddleware
         catch (ArgumentException ex)
         {
             _logger.LogError(ex, ex.Message);
-            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             await httpContext.Response.WriteAsync(ex.Message);
         }
         catch (Exception ex)
