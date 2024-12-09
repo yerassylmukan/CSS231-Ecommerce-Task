@@ -22,6 +22,9 @@ public class EmailSender : IEmailSender
     public async Task EmailSendAsync(string recipientEmail, string subject, string message,
         CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            throw new OperationCanceledException("Email sending was canceled.");
+        
         if (string.IsNullOrEmpty(recipientEmail))
             throw new ArgumentException("Recipient email cannot be null or empty.", nameof(recipientEmail));
 
@@ -32,9 +35,6 @@ public class EmailSender : IEmailSender
 
         var sendEmailTask = _smtpClient.SendMailAsync(mailMessage, cancellationToken);
         await Task.WhenAny(sendEmailTask, Task.Delay(Timeout.Infinite, cancellationToken));
-
-        if (cancellationToken.IsCancellationRequested)
-            throw new OperationCanceledException("Email sending was canceled.");
 
         await sendEmailTask;
     }

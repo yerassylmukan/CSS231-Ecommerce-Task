@@ -14,6 +14,6 @@ public interface IApplicationUserService
             IEnumerable<string> Roles)>
         GetUserDetailsByUserIdAsync(string userId);
 
-    Task UpdateProfileInformationAsync(string userId, string firstName, string lastName, string email,
+    Task UpdateProfileInformationAsync(string userId, string? firstName, string lastName, string email,
         string profilePictureUrl);
 }

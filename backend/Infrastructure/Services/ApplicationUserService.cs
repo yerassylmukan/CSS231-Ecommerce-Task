@@ -21,7 +21,7 @@ public class ApplicationUserService : IApplicationUserService
         GetUserDetailsByUserNameAsync(string userName)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
-        if (user == null) throw new UserNotFoundException("User not found");
+        if (user == null) throw new UserNotFoundException(userName);
 
         var roles = await _userManager.GetRolesAsync(user);
 
@@ -34,7 +34,7 @@ public class ApplicationUserService : IApplicationUserService
         GetUserDetailsByEmailAsync(string email)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
-        if (user == null) throw new UserNotFoundException("User not found");
+        if (user == null) throw new UserNotFoundException(email);
 
         var roles = await _userManager.GetRolesAsync(user);
 
@@ -46,27 +46,27 @@ public class ApplicationUserService : IApplicationUserService
             IEnumerable<string> Roles)> GetUserDetailsByUserIdAsync(string userId)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (user == null) throw new UserNotFoundException("User not found");
+        if (user == null) throw new UserNotFoundException(userId);
         var roles = await _userManager.GetRolesAsync(user);
 
         return (user.Id!, user.FirstName!, user.LastName!, user.UserName!, user.Email!, user.ProfilePictureUrl, roles);
     }
 
-    public async Task UpdateProfileInformationAsync(string userId, string firstName, string lastName, string email,
+    public async Task UpdateProfileInformationAsync(string userId, string? firstName, string lastName, string email,
         string profilePictureUrl)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (user == null) throw new UserNotFoundException("User not found");
+        if (user == null) throw new UserNotFoundException(userId);
 
         var isUpdated = false;
 
-        if (user.FirstName != firstName)
+        if (!string.IsNullOrEmpty(firstName) && user.FirstName != firstName)
         {
             user.FirstName = firstName;
             isUpdated = true;
         }
 
-        if (user.LastName != lastName)
+        if (!string.IsNullOrEmpty(lastName) && user.LastName != lastName)
         {
             user.LastName = lastName;
             isUpdated = true;
