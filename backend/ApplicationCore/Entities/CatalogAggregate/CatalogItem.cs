@@ -28,6 +28,8 @@ public class CatalogItem : BaseEntity
     public int CatalogBrandId { get; private set; }
     public CatalogBrand? CatalogBrand { get; private set; }
     public int StockQuantity { get; private set; }
+    private readonly List<CatalogItemReview> _reviews = new();
+    public IReadOnlyCollection<CatalogItemReview> Reviews => _reviews.AsReadOnly();
 
     public void UpdateDetails(CatalogItemDetails catalogItemDetails)
     {
@@ -72,6 +74,29 @@ public class CatalogItem : BaseEntity
             throw new InvalidOperationException("Not enough stock available.");
 
         StockQuantity += quantity;
+    }
+
+    public void AddReviews(int catalogItemId, string userId, decimal rating, string reviewText)
+    {
+        var review = new CatalogItemReview(catalogItemId, userId, rating, reviewText);
+        _reviews.Add(review);
+    }
+
+    public void UpdateReviews(int reviewId, decimal? rating, string reviewText)
+    {
+        var review = Reviews.FirstOrDefault(r => r.Id == reviewId);
+
+        if (review == null) throw new ArgumentException("Review not found.", nameof(reviewId));
+
+        if (rating.HasValue)
+        {
+            if (rating < 0 || rating > 5)
+                throw new ArgumentException("Rating must be between 0 and 5.", nameof(rating));
+
+            review.UpdateReview(rating, reviewText);
+        }
+
+        if (!string.IsNullOrEmpty(reviewText)) review.UpdateReview(rating, reviewText);
     }
 
     public readonly record struct CatalogItemDetails

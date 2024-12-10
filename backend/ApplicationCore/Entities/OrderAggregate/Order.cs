@@ -2,8 +2,6 @@
 
 public class Order : BaseEntity
 {
-    private readonly List<OrderItem> _items = new();
-
     public Order()
     {
     }
@@ -21,6 +19,7 @@ public class Order : BaseEntity
     public string UserId { get; private set; }
     public DateTimeOffset OrderDate { get; private set; } = DateTimeOffset.Now;
     public ShippingMethod ShippingMethod { get; private set; }
+    private readonly List<OrderItem> _items = new();
     public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
 
     public decimal Total()

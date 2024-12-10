@@ -9,7 +9,6 @@ public class OrderConfig : IEntityTypeConfiguration<Order>
     public void Configure(EntityTypeBuilder<Order> builder)
     {
         var navigation = builder.Metadata.FindNavigation(nameof(Order.Items));
-
         navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Property(o => o.UserId)

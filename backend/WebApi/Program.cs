@@ -13,6 +13,7 @@ using WebApi;
 using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
 // To ensure that webapi successfully connects to the databases (db and identity),
 // I set a delay of 5 seconds to avoid errors during migration.
 // Docker depends_on does not wait for dependent containers to be fully ready to accept connections.
@@ -110,7 +111,7 @@ using (var scope = app.Services.CreateScope())
         var identityContext = services.GetRequiredService<AppIdentityDbContext>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        
+
         var applicationDbContext = services.GetRequiredService<ApplicationDbContext>();
 
         await AppIdentitySeedData.SeedAsync(identityContext, userManager, roleManager);

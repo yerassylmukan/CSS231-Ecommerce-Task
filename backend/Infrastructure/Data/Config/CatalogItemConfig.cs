@@ -8,7 +8,10 @@ public class CatalogItemConfig : IEntityTypeConfiguration<CatalogItem>
 {
     public void Configure(EntityTypeBuilder<CatalogItem> builder)
     {
-        builder.ToTable("Catalog");
+        var navigation = builder.Metadata.FindNavigation(nameof(CatalogItem.Reviews));
+        navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.ToTable("CatalogItems");
 
         builder.Property(ci => ci.Id)
             .UseHiLo("catalog_hilo")

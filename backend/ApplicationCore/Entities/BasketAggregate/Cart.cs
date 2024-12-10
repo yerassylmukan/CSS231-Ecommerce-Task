@@ -2,8 +2,6 @@
 
 public class Cart : BaseEntity
 {
-    private readonly List<CartItem> _items = new();
-
     public Cart()
     {
     }
@@ -15,6 +13,7 @@ public class Cart : BaseEntity
     }
 
     public string UserId { get; private set; }
+    private readonly List<CartItem> _items = new();
     public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
     public int TotalItems => Items.Sum(item => item.Quantity);
 

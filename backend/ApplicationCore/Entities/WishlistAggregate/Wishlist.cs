@@ -2,8 +2,6 @@
 
 public class Wishlist : BaseEntity
 {
-    private readonly List<WishlistItem> _items = new();
-
     public Wishlist()
     {
     }
@@ -15,5 +13,6 @@ public class Wishlist : BaseEntity
     }
 
     public string UserId { get; private set; }
+    private readonly List<WishlistItem> _items = new();
     public IReadOnlyCollection<WishlistItem> Items => _items.AsReadOnly();
 }
