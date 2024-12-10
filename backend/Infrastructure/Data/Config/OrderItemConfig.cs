@@ -16,7 +16,7 @@ public class OrderItemConfig : IEntityTypeConfiguration<OrderItem>
                 .HasMaxLength(50)
                 .IsRequired();
         });
-        
+
         builder.Property(oi => oi.UnitPrice)
             .IsRequired()
             .HasColumnType("decimal(18,2)");

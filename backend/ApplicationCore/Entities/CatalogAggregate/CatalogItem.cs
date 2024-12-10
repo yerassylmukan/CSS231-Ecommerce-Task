@@ -2,7 +2,10 @@
 
 public class CatalogItem : BaseEntity
 {
-    public CatalogItem() { }
+    public CatalogItem()
+    {
+    }
+
     public CatalogItem(int catalogTypeId, int catalogBrandId, string name, string description, decimal price,
         string pictureUrl, int initialStock)
     {
@@ -33,10 +36,10 @@ public class CatalogItem : BaseEntity
 
         if (!string.IsNullOrWhiteSpace(catalogItemDetails.Description))
             throw new ArgumentException("Description cannot be empty.", nameof(catalogItemDetails.Description));
-        
+
         if (catalogItemDetails.Price <= 0)
             throw new ArgumentException("Price cannot be less than zero.", nameof(catalogItemDetails.Price));
-        
+
         Name = catalogItemDetails.Name;
         Description = catalogItemDetails.Description;
         Price = catalogItemDetails.Price;
@@ -67,7 +70,7 @@ public class CatalogItem : BaseEntity
     {
         if (quantity < 0 && StockQuantity + quantity < 0)
             throw new InvalidOperationException("Not enough stock available.");
-        
+
         StockQuantity += quantity;
     }
 

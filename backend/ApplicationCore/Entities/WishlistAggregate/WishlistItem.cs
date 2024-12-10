@@ -1,11 +1,11 @@
-﻿using ApplicationCore.Entities.CatalogAggregate;
-
-namespace ApplicationCore.Entities.WishlistAggregate;
+﻿namespace ApplicationCore.Entities.WishlistAggregate;
 
 public class WishlistItem : BaseEntity
 {
-    public WishlistItem() { }
-    
+    public WishlistItem()
+    {
+    }
+
     public WishlistItem(int catalogItemId)
     {
         CatalogItemId = catalogItemId;

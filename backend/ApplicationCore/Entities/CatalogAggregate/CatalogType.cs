@@ -2,8 +2,10 @@
 
 public class CatalogType : BaseEntity
 {
-    public CatalogType() { }
-        
+    public CatalogType()
+    {
+    }
+
     public CatalogType(string type)
     {
         Type = type;

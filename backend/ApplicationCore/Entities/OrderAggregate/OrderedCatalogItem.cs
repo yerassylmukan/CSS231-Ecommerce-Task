@@ -2,7 +2,9 @@
 
 public class OrderedCatalogItem
 {
-    private OrderedCatalogItem() { }
+    private OrderedCatalogItem()
+    {
+    }
 
     public OrderedCatalogItem(int catalogItemId, string productName, string pictureUri)
     {

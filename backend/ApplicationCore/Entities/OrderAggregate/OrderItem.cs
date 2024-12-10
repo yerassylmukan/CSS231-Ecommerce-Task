@@ -2,14 +2,16 @@
 
 public class OrderItem : BaseEntity
 {
-    public OrderItem() { }
-    
+    public OrderItem()
+    {
+    }
+
     public OrderItem(OrderedCatalogItem orderedCatalogItem, decimal unitPrice, int units)
     {
         if (orderedCatalogItem == null) throw new ArgumentNullException(nameof(orderedCatalogItem));
         if (unitPrice <= 0) throw new ArgumentException("Unit price must be greater than zero.");
         if (units <= 0) throw new ArgumentException("Quantity must be greater than zero.");
-        
+
         OrderedCatalogItem = orderedCatalogItem;
         UnitPrice = unitPrice;
         Units = units;

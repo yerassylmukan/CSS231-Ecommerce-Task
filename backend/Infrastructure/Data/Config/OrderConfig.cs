@@ -23,11 +23,11 @@ public class OrderConfig : IEntityTypeConfiguration<Order>
             a.Property(s => s.Name)
                 .HasMaxLength(30)
                 .IsRequired();
-            
+
             a.Property(s => s.Cost)
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
-            
+
             a.Property(s => s.DeliveryTime)
                 .IsRequired();
         });

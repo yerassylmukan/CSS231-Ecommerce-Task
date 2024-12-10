@@ -1,16 +1,16 @@
-﻿using ApplicationCore.Entities.CatalogAggregate;
-
-namespace ApplicationCore.Entities.BasketAggregate;
+﻿namespace ApplicationCore.Entities.BasketAggregate;
 
 public class CartItem : BaseEntity
 {
-    public CartItem() { }
-    
+    public CartItem()
+    {
+    }
+
     public CartItem(int catalogItemId, int quantity, decimal unitPrice)
     {
-        if (quantity <= 0) 
+        if (quantity <= 0)
             throw new ArgumentException("Quantity must be greater than zero.");
-        
+
         CatalogItemId = catalogItemId;
         UnitPrice = unitPrice;
         SetQuantity(quantity);
@@ -26,7 +26,7 @@ public class CartItem : BaseEntity
         if (quantity < 0) throw new ArgumentException("Quantity must be non-negative.");
         Quantity += quantity;
     }
-    
+
     public void SetQuantity(int quantity)
     {
         if (quantity < 0) throw new ArgumentException("Quantity must be non-negative.");

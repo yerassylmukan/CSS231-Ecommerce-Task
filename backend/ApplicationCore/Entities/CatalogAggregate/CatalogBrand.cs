@@ -2,8 +2,10 @@
 
 public class CatalogBrand : BaseEntity
 {
-    public CatalogBrand() { }
-    
+    public CatalogBrand()
+    {
+    }
+
     public CatalogBrand(string brand)
     {
         Brand = brand;
