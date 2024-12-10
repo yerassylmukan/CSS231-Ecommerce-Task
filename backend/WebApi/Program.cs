@@ -110,8 +110,11 @@ using (var scope = app.Services.CreateScope())
         var identityContext = services.GetRequiredService<AppIdentityDbContext>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        
+        var applicationDbContext = services.GetRequiredService<ApplicationDbContext>();
 
         await AppIdentitySeedData.SeedAsync(identityContext, userManager, roleManager);
+        ApplicationSeedData.Seed(applicationDbContext);
     }
     catch (Exception e)
     {
