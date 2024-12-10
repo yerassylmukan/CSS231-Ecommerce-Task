@@ -24,7 +24,7 @@ public class EmailSender : IEmailSender
     {
         if (cancellationToken.IsCancellationRequested)
             throw new OperationCanceledException("Email sending was canceled.");
-        
+
         if (string.IsNullOrEmpty(recipientEmail))
             throw new ArgumentException("Recipient email cannot be null or empty.", nameof(recipientEmail));
 

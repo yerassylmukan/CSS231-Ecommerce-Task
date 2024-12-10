@@ -56,24 +56,11 @@ public class CatalogItem : BaseEntity
         PictureUrl = pictureUrl;
     }
 
-    public void IncreaseStock(int quantity)
+    public void UpdateStock(int quantity)
     {
-        if (quantity <= 0) throw new ArgumentException("Quantity to increase must be greater than zero.");
+        if (quantity < 0 && StockQuantity + quantity < 0)
+            throw new InvalidOperationException("Not enough stock available.");
         StockQuantity += quantity;
-    }
-
-    public void DecreaseStock(int quantity)
-    {
-        if (quantity <= 0) throw new ArgumentException("Quantity to decrease must be greater than zero.");
-        if (StockQuantity < quantity)
-            throw new InvalidOperationException("Insufficient stock to complete the operation.");
-
-        StockQuantity -= quantity;
-    }
-
-    public bool IsInStock(int requestedQuantity)
-    {
-        return StockQuantity >= requestedQuantity;
     }
 
     public readonly record struct CatalogItemDetails

@@ -1,6 +1,5 @@
 ﻿using ApplicationCore.DTOs;
 using ApplicationCore.Interfaces;
-using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
@@ -101,18 +100,19 @@ public class ApplicationUserController : ControllerBase
     }
 
     [HttpPost("{userId}")]
-    public async Task<IActionResult> UpdateProfileInformation(string userId, [FromBody] UpdateProfileInformationModel model,
+    public async Task<IActionResult> UpdateProfileInformation(string userId,
+        [FromBody] UpdateProfileInformationModel model,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        
+
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
         await _service.UpdateProfileInformationAsync(userId, model.FirstName, model.LastName, model.Email,
             model.ProfilePictureUrl);
-        
+
         return Ok();
     }
 }
