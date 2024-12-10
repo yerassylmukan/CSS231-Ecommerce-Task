@@ -1,6 +1,6 @@
 ﻿namespace ApplicationCore.Entities.OrderAggregate;
 
-public class Order
+public class Order : BaseEntity
 {
     public Order(string userId, int shippingMethodId, ShippingMethod shippingMethod, List<OrderItem> orderItems)
     {

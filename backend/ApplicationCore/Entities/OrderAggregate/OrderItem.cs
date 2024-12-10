@@ -2,7 +2,7 @@
 
 namespace ApplicationCore.Entities.OrderAggregate;
 
-public class OrderItem
+public class OrderItem : BaseEntity
 {
     public OrderItem(int orderId, int catalogItemId, CatalogItem catalogItem, int quantity, decimal unitPrice)
     {
