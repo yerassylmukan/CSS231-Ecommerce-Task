@@ -1,6 +1,7 @@
 using System.Text;
 using ApplicationCore.Constants;
 using ApplicationCore.Interfaces;
+using Infrastructure.Data;
 using Infrastructure.Identity;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,6 +20,9 @@ await Task.Delay(5000);
 
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ITokenClaimsService, TokenClaimService>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();

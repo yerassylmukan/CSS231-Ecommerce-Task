@@ -2,33 +2,33 @@
 
 public class Order : BaseEntity
 {
-    public Order(string userId, int shippingMethodId, ShippingMethod shippingMethod, List<OrderItem> orderItems)
+    public Order() { }
+        
+    public Order(string userId, ShippingMethod shippingMethod, List<OrderItem> items)
     {
-        if (string.IsNullOrEmpty(userId)) throw new ArgumentException("User ID cannot be null or empty.");
-        if (shippingMethod == null) throw new ArgumentNullException(nameof(shippingMethod));
-        if (orderItems == null || !orderItems.Any()) throw new ArgumentException("Order must have at least one item.");
+        if (string.IsNullOrEmpty(userId)) 
+            throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
 
         UserId = userId;
-        ShippingMethodId = shippingMethodId;
         ShippingMethod = shippingMethod;
-        OrderItems = orderItems;
-        OrderDate = DateTimeOffset.Now;
+        _items = items;
     }
 
     public string UserId { get; private set; }
-    public DateTimeOffset OrderDate { get; private set; }
-    public List<OrderItem> OrderItems { get; }
-
-    public int ShippingMethodId { get; private set; }
+    public DateTimeOffset OrderDate { get; private set; } = DateTimeOffset.Now;
     public ShippingMethod ShippingMethod { get; private set; }
-
-    public decimal Subtotal => OrderItems.Sum(oi => oi.TotalPrice);
-    public decimal Total => Subtotal + (ShippingMethod?.Cost ?? 0);
-
-    public void UpdateShippingMethod(int shippingMethodId, ShippingMethod shippingMethod)
+    
+    
+    private readonly List<OrderItem> _items = new List<OrderItem>();
+    public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
+    
+    public decimal Total()
     {
-        if (shippingMethod == null) throw new ArgumentNullException(nameof(shippingMethod));
-        ShippingMethodId = shippingMethodId;
-        ShippingMethod = shippingMethod;
+        var total = 0m;
+        foreach (var item in _items)
+        {
+            total += item.UnitPrice * item.Units;
+        }
+        return total;
     }
 }

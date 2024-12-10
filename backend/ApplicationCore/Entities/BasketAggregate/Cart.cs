@@ -4,6 +4,8 @@ namespace ApplicationCore.Entities.BasketAggregate;
 
 public class Cart : BaseEntity
 {
+    public Cart() { }
+    
     public Cart(string userId)
     {
         if (string.IsNullOrEmpty(userId)) throw new ArgumentException("User ID cannot be null or empty.");
@@ -11,31 +13,31 @@ public class Cart : BaseEntity
     }
 
     public string UserId { get; private set; }
-    public List<CartItem> Items { get; } = new();
+    
+    private readonly List<CartItem> _items = new List<CartItem>();
+    public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
+    public int TotalItems => Items.Sum(item => item.Quantity);
 
-    public void AddItem(int catalogItemId, int quantity, CatalogItem catalogItem)
+    public void AddItem(int catalogItemId, int unitPrice, int quantity = 1)
     {
-        if (quantity <= 0) throw new ArgumentException("Quantity must be greater than zero.");
-        var existingItem = Items.FirstOrDefault(item => item.CatalogItemId == catalogItemId);
+        if (quantity <= 0) 
+            throw new ArgumentException("Quantity must be greater than zero.");
 
-        if (existingItem is not null)
-            existingItem.UpdateQuantity(existingItem.Quantity + quantity);
-        else
-            Items.Add(new CartItem(Id, catalogItemId, catalogItem, quantity));
+        if (!Items.Any(i => i.CatalogItemId == catalogItemId))
+        {
+            _items.Add(new CartItem(catalogItemId, quantity, unitPrice));
+        }
+        var existingItem = Items.FirstOrDefault(i => i.CatalogItemId == catalogItemId);
+        existingItem.AddQuantity(quantity);
     }
 
     public void RemoveItem(int catalogItemId)
     {
-        var item = Items.FirstOrDefault(i => i.CatalogItemId == catalogItemId);
-        if (item is null) throw new InvalidOperationException("Item not found in cart.");
-        Items.Remove(item);
+        _items.RemoveAll(i => i.Quantity == 0);
     }
 
-    public void UpdateItemQuantity(int catalogItemId, int quantity)
+    public void UpdateUserId(string userId)
     {
-        if (quantity < 0) throw new ArgumentException("Quantity must be non-negative.");
-        var item = Items.FirstOrDefault(i => i.CatalogItemId == catalogItemId);
-        if (item is null) throw new InvalidOperationException("Item not found in cart.");
-        item.UpdateQuantity(quantity);
+        UserId = userId;
     }
 }

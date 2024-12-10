@@ -2,6 +2,8 @@
 
 public class ShippingMethod
 {
+    public ShippingMethod() { }
+        
     public ShippingMethod(string name, decimal cost, TimeSpan deliveryTime)
     {
         if (string.IsNullOrEmpty(name)) throw new ArgumentException("Name cannot be null or empty.");

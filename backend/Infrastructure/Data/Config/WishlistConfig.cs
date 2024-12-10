@@ -8,16 +8,11 @@ public class WishlistConfig : IEntityTypeConfiguration<Wishlist>
 {
     public void Configure(EntityTypeBuilder<Wishlist> builder)
     {
-        builder.ToTable("Wishlists");
-        
-        builder.HasKey(x => x.Id);
-        
-        builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        
-        builder
-            .HasMany(w => w.Items)
-            .WithOne(wi => wi.Wishlist)
-            .HasForeignKey(wi => wi.WishlistId)
-            .OnDelete(DeleteBehavior.Cascade);
+        var navigation = builder.Metadata.FindNavigation(nameof(Wishlist.Items));
+        navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Property(b => b.UserId)
+            .IsRequired()
+            .HasMaxLength(256);
     }
 }

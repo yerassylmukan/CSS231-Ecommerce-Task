@@ -1,30 +1,21 @@
-﻿using ApplicationCore.Entities.CatalogAggregate;
-
-namespace ApplicationCore.Entities.OrderAggregate;
+﻿namespace ApplicationCore.Entities.OrderAggregate;
 
 public class OrderItem : BaseEntity
 {
-    public OrderItem(int orderId, int catalogItemId, CatalogItem catalogItem, int quantity, decimal unitPrice)
+    public OrderItem() { }
+    
+    public OrderItem(OrderedCatalogItem orderedCatalogItem, decimal unitPrice, int units)
     {
-        if (quantity <= 0) throw new ArgumentException("Quantity must be greater than zero.");
+        if (orderedCatalogItem == null) throw new ArgumentNullException(nameof(orderedCatalogItem));
         if (unitPrice <= 0) throw new ArgumentException("Unit price must be greater than zero.");
-        if (catalogItem == null) throw new ArgumentNullException(nameof(catalogItem));
-
-        OrderId = orderId;
-        CatalogItemId = catalogItemId;
-        CatalogItem = catalogItem;
-        Quantity = quantity;
+        if (units <= 0) throw new ArgumentException("Quantity must be greater than zero.");
+        
+        OrderedCatalogItem = orderedCatalogItem;
         UnitPrice = unitPrice;
+        Units = units;
     }
 
-    public int OrderId { get; private set; }
-    public Order Order { get; private set; }
-
-    public int CatalogItemId { get; private set; }
-    public CatalogItem CatalogItem { get; private set; }
-
-    public int Quantity { get; }
-    public decimal UnitPrice { get; }
-
-    public decimal TotalPrice => Quantity * UnitPrice;
+    public OrderedCatalogItem OrderedCatalogItem { get; private set; }
+    public decimal UnitPrice { get; private set; }
+    public int Units { get; private set; }
 }

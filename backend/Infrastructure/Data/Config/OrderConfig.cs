@@ -8,22 +8,30 @@ public class OrderConfig : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.ToTable("Order");
+        var navigation = builder.Metadata.FindNavigation(nameof(Order.Items));
 
-        builder.HasKey(o => o.Id);
-        
-        builder.Property(o => o.Id).ValueGeneratedOnAdd();
-        
-        builder
-            .HasMany(o => o.OrderItems)
-            .WithOne(oi => oi.Order)
-            .HasForeignKey(oi => oi.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        builder
-            .HasOne(o => o.ShippingMethod)
-            .WithMany()
-            .HasForeignKey(o => o.ShippingMethodId)
-            .OnDelete(DeleteBehavior.Restrict);
+        navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Property(o => o.UserId)
+            .IsRequired()
+            .HasMaxLength(256);
+
+        builder.OwnsOne(o => o.ShippingMethod, a =>
+        {
+            a.WithOwner();
+
+            a.Property(s => s.Name)
+                .HasMaxLength(30)
+                .IsRequired();
+            
+            a.Property(s => s.Cost)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+            
+            a.Property(s => s.DeliveryTime)
+                .IsRequired();
+        });
+
+        builder.Navigation(x => x.ShippingMethod).IsRequired();
     }
 }

@@ -8,16 +8,11 @@ public class CartConfig : IEntityTypeConfiguration<Cart>
 {
     public void Configure(EntityTypeBuilder<Cart> builder)
     {
-        builder.ToTable("Cart");
-        
-        builder.HasKey(x => x.Id);
-        
-        builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        
-        builder
-            .HasMany(c => c.Items)
-            .WithOne(ci => ci.Cart)
-            .HasForeignKey(ci => ci.CartId)
-            .OnDelete(DeleteBehavior.Cascade);
+        var navigation = builder.Metadata.FindNavigation(nameof(Cart.Items));
+        navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Property(b => b.UserId)
+            .IsRequired()
+            .HasMaxLength(256);
     }
 }

@@ -8,16 +8,17 @@ public class OrderItemConfig : IEntityTypeConfiguration<OrderItem>
 {
     public void Configure(EntityTypeBuilder<OrderItem> builder)
     {
-        builder.ToTable("OrderItem");
+        builder.OwnsOne(oi => oi.OrderedCatalogItem, ordered =>
+        {
+            ordered.WithOwner();
+
+            ordered.Property(o => o.ProductName)
+                .HasMaxLength(50)
+                .IsRequired();
+        });
         
-        builder.HasKey(x => x.Id);
-        
-        builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        
-        builder
-            .HasOne(oi => oi.CatalogItem)
-            .WithMany()
-            .HasForeignKey(oi => oi.CatalogItemId)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.Property(oi => oi.UnitPrice)
+            .IsRequired()
+            .HasColumnType("decimal(18,2)");
     }
 }

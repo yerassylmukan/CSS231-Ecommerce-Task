@@ -22,7 +22,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<WishlistItem> WishlistItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-    public DbSet<ShippingMethod> ShippingMethods { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
