@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services;
 
@@ -13,15 +14,17 @@ public class IdentityService : IIdentityService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ITokenClaimsService _tokenClaimsService;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ILogger<IdentityService> _logger;
 
     public IdentityService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-        SignInManager<ApplicationUser> signInManager, ITokenClaimsService tokenClaimsService, IEmailSender emailSender)
+        SignInManager<ApplicationUser> signInManager, ITokenClaimsService tokenClaimsService, IEmailSender emailSender, ILogger<IdentityService> logger)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _signInManager = signInManager;
         _tokenClaimsService = tokenClaimsService;
         _emailSender = emailSender;
+        _logger = logger;
     }
 
     public async Task<string> CreateUserAsync(string email, string password, string firstName, string lastName,
@@ -91,6 +94,8 @@ public class IdentityService : IIdentityService
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
         var resetLink = linkToResetPassword;
+        
+        _logger.LogInformation("Password reset token: {Token}", token);
 
         await _emailSender.EmailSendAsync(
             email,
@@ -105,6 +110,8 @@ public class IdentityService : IIdentityService
     {
         var user = await _userManager.FindByEmailAsync(email)
                    ?? throw new UserNotFoundException(email);
+        
+        _logger.LogInformation("Initiating password reset for email: {Email}", email);
 
         var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
         if (!result.Succeeded)
@@ -112,5 +119,7 @@ public class IdentityService : IIdentityService
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
             throw new Exception($"Password reset failed: {errors}");
         }
+        
+        _logger.LogInformation("Password reset successful for user {Email}", email);
     }
 }

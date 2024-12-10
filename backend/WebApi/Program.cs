@@ -51,6 +51,8 @@ builder.Services.AddAuthentication(config =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddLogging();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
