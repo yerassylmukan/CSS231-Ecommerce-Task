@@ -93,7 +93,7 @@ public class IdentityService : IIdentityService
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-        var resetLink = linkToResetPassword;
+        var resetLink = $"{linkToResetPassword}?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(token)}";
         
         _logger.LogInformation("Password reset token: {Token}", token);
 
