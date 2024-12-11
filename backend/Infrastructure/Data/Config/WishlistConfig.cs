@@ -8,11 +8,11 @@ public class WishlistConfig : IEntityTypeConfiguration<Wishlist>
 {
     public void Configure(EntityTypeBuilder<Wishlist> builder)
     {
-        var navigation = builder.Metadata.FindNavigation(nameof(Wishlist.Items));
-        navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
+        builder.HasKey(w => w.Id);
 
-        builder.Property(b => b.UserId)
-            .IsRequired()
-            .HasMaxLength(256);
+        builder.Property(w => w.Id).ValueGeneratedOnAdd();
+
+        builder.Property(w => w.UserId)
+            .IsRequired();
     }
 }

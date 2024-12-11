@@ -1,15 +1,9 @@
 ﻿namespace ApplicationCore.Entities.CatalogAggregate;
 
-public class CatalogBrand : BaseEntity
+public class CatalogBrand
 {
-    public CatalogBrand()
-    {
-    }
+    public int Id { get; set; }
+    public string Brand { get; set; }
 
-    public CatalogBrand(string brand)
-    {
-        Brand = brand;
-    }
-
-    public string Brand { get; private set; }
+    public ICollection<CatalogItem> CatalogItems { get; } = new List<CatalogItem>();
 }

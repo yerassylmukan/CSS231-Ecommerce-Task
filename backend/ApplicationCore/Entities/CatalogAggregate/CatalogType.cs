@@ -1,15 +1,9 @@
 ﻿namespace ApplicationCore.Entities.CatalogAggregate;
 
-public class CatalogType : BaseEntity
+public class CatalogType
 {
-    public CatalogType()
-    {
-    }
+    public int Id { get; set; }
+    public string Type { get; set; }
 
-    public CatalogType(string type)
-    {
-        Type = type;
-    }
-
-    public string Type { get; private set; }
+    public ICollection<CatalogItem> CatalogItems { get; } = new List<CatalogItem>();
 }

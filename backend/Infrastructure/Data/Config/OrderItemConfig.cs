@@ -8,17 +8,19 @@ public class OrderItemConfig : IEntityTypeConfiguration<OrderItem>
 {
     public void Configure(EntityTypeBuilder<OrderItem> builder)
     {
-        builder.OwnsOne(oi => oi.OrderedCatalogItem, ordered =>
-        {
-            ordered.WithOwner();
+        builder.HasKey(oi => oi.Id);
 
-            ordered.Property(o => o.ProductName)
-                .HasMaxLength(50)
-                .IsRequired();
-        });
+        builder.Property(oi => oi.Id).ValueGeneratedOnAdd();
+
+        builder.Property(oi => oi.CatalogItemId).IsRequired();
 
         builder.Property(oi => oi.UnitPrice)
             .IsRequired()
             .HasColumnType("decimal(18,2)");
+
+        builder.HasOne(oi => oi.Order)
+            .WithMany(o => o.Items)
+            .HasForeignKey(oi => oi.OrderId)
+            .IsRequired();
     }
 }

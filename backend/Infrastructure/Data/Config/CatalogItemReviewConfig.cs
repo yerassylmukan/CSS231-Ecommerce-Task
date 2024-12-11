@@ -10,15 +10,11 @@ public class CatalogItemReviewConfig : IEntityTypeConfiguration<CatalogItemRevie
     {
         builder.ToTable("Reviews");
 
-        builder.Property(r => r.Id)
-            .UseHiLo("review_hilo")
-            .IsRequired();
+        builder.HasKey(r => r.Id);
+
+        builder.Property(r => r.Id).ValueGeneratedOnAdd();
 
         builder.Property(r => r.UserId)
-            .IsRequired()
-            .HasMaxLength(256);
-
-        builder.Property(r => r.CatalogItemId)
             .IsRequired();
 
         builder.Property(r => r.Rating)
@@ -26,11 +22,12 @@ public class CatalogItemReviewConfig : IEntityTypeConfiguration<CatalogItemRevie
             .IsRequired();
 
         builder.Property(r => r.ReviewText)
-            .IsRequired()
-            .HasMaxLength(256);
+            .HasMaxLength(256)
+            .IsRequired();
 
         builder.HasOne(r => r.CatalogItem)
-            .WithMany(c => c.Reviews)
-            .HasForeignKey(r => r.CatalogItemId);
+            .WithMany(ci => ci.Reviews)
+            .HasForeignKey(r => r.CatalogItemId)
+            .IsRequired(false);
     }
 }

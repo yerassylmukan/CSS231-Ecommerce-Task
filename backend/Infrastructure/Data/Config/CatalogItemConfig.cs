@@ -8,32 +8,39 @@ public class CatalogItemConfig : IEntityTypeConfiguration<CatalogItem>
 {
     public void Configure(EntityTypeBuilder<CatalogItem> builder)
     {
-        var navigation = builder.Metadata.FindNavigation(nameof(CatalogItem.Reviews));
-        navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
-
         builder.ToTable("CatalogItems");
 
-        builder.Property(ci => ci.Id)
-            .UseHiLo("catalog_hilo")
-            .IsRequired();
+        builder.HasKey(ci => ci.Id);
+
+        builder.Property(ci => ci.Id).ValueGeneratedOnAdd();
 
         builder.Property(ci => ci.Name)
-            .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(256)
+            .IsRequired();
+
+        builder.Property(ci => ci.Description)
+            .HasMaxLength(256)
+            .IsRequired();
 
         builder.Property(ci => ci.Price)
-            .IsRequired()
-            .HasColumnType("decimal(18,2)");
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
 
         builder.Property(ci => ci.PictureUrl)
-            .IsRequired(false);
+            .HasMaxLength(256)
+            .IsRequired();
+
+        builder.Property(ci => ci.StockQuantity)
+            .IsRequired();
 
         builder.HasOne(ci => ci.CatalogBrand)
-            .WithMany()
-            .HasForeignKey(ci => ci.CatalogBrandId);
+            .WithMany(cb => cb.CatalogItems)
+            .HasForeignKey(ci => ci.CatalogBrandId)
+            .IsRequired();
 
         builder.HasOne(ci => ci.CatalogType)
-            .WithMany()
-            .HasForeignKey(ci => ci.CatalogTypeId);
+            .WithMany(ct => ct.CatalogItems)
+            .HasForeignKey(ci => ci.CatalogTypeId)
+            .IsRequired();
     }
 }

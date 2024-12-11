@@ -22,18 +22,6 @@ namespace Infrastructure.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.HasSequence("catalog_brand_hilo")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("catalog_hilo")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("catalog_type_hilo")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("review_hilo")
-                .IncrementsBy(10);
-
             modelBuilder.Entity("ApplicationCore.Entities.BasketAggregate.Cart", b =>
                 {
                     b.Property<int>("Id")
@@ -44,8 +32,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -85,12 +72,12 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "catalog_brand_hilo");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Brand")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -103,7 +90,7 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "catalog_hilo");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CatalogBrandId")
                         .HasColumnType("integer");
@@ -113,15 +100,18 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PictureUrl")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -144,9 +134,9 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "review_hilo");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CatalogItemId")
+                    b.Property<int?>("CatalogItemId")
                         .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("CreatedTime")
@@ -162,8 +152,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -178,12 +167,12 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "catalog_type_hilo");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -203,8 +192,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -219,7 +207,10 @@ namespace Infrastructure.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("OrderId")
+                    b.Property<int>("CatalogItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("UnitPrice")
@@ -245,8 +236,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -276,23 +266,25 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.BasketAggregate.CartItem", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.BasketAggregate.Cart", null)
+                    b.HasOne("ApplicationCore.Entities.BasketAggregate.Cart", "Cart")
                         .WithMany("Items")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Cart");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.CatalogAggregate.CatalogItem", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.CatalogAggregate.CatalogBrand", "CatalogBrand")
-                        .WithMany()
+                        .WithMany("CatalogItems")
                         .HasForeignKey("CatalogBrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.CatalogAggregate.CatalogType", "CatalogType")
-                        .WithMany()
+                        .WithMany("CatalogItems")
                         .HasForeignKey("CatalogTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -306,9 +298,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.HasOne("ApplicationCore.Entities.CatalogAggregate.CatalogItem", "CatalogItem")
                         .WithMany("Reviews")
-                        .HasForeignKey("CatalogItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CatalogItemId");
 
                     b.Navigation("CatalogItem");
                 });
@@ -328,8 +318,8 @@ namespace Infrastructure.Data.Migrations
 
                             b1.Property<string>("Name")
                                 .IsRequired()
-                                .HasMaxLength(30)
-                                .HasColumnType("character varying(30)");
+                                .HasMaxLength(256)
+                                .HasColumnType("character varying(256)");
 
                             b1.HasKey("OrderId");
 
@@ -345,46 +335,24 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.OrderAggregate.OrderItem", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.OrderAggregate.Order", null)
+                    b.HasOne("ApplicationCore.Entities.OrderAggregate.Order", "Order")
                         .WithMany("Items")
-                        .HasForeignKey("OrderId");
-
-                    b.OwnsOne("ApplicationCore.Entities.OrderAggregate.OrderedCatalogItem", "OrderedCatalogItem", b1 =>
-                        {
-                            b1.Property<int>("OrderItemId")
-                                .HasColumnType("integer");
-
-                            b1.Property<int>("CatalogItemId")
-                                .HasColumnType("integer");
-
-                            b1.Property<string>("PictureUri")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("ProductName")
-                                .IsRequired()
-                                .HasMaxLength(50)
-                                .HasColumnType("character varying(50)");
-
-                            b1.HasKey("OrderItemId");
-
-                            b1.ToTable("OrderItems");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderItemId");
-                        });
-
-                    b.Navigation("OrderedCatalogItem")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.WishlistAggregate.WishlistItem", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.WishlistAggregate.Wishlist", null)
+                    b.HasOne("ApplicationCore.Entities.WishlistAggregate.Wishlist", "Wishlist")
                         .WithMany("Items")
                         .HasForeignKey("WishlistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Wishlist");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.BasketAggregate.Cart", b =>
@@ -392,9 +360,19 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.CatalogAggregate.CatalogBrand", b =>
+                {
+                    b.Navigation("CatalogItems");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.CatalogAggregate.CatalogItem", b =>
                 {
                     b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.CatalogAggregate.CatalogType", b =>
+                {
+                    b.Navigation("CatalogItems");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.OrderAggregate.Order", b =>
