@@ -3,11 +3,12 @@ using ApplicationCore.Entities.BasketAggregate;
 using ApplicationCore.Entities.CatalogAggregate;
 using ApplicationCore.Entities.OrderAggregate;
 using ApplicationCore.Entities.WishlistAggregate;
+using ApplicationCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {

@@ -44,7 +44,7 @@ public class ExceptionHandlingMiddleware
             httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             await httpContext.Response.WriteAsync(ex.Message);
         }
-        catch (RoleDoesNotExistException ex)
+        catch (RoleDoesNotExistsException ex)
         {
             _logger.LogError(ex, ex.Message);
             httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -53,7 +53,7 @@ public class ExceptionHandlingMiddleware
         catch (OperationCanceledException ex)
         {
             _logger.LogError(ex, ex.Message);
-            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            httpContext.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
             await httpContext.Response.WriteAsync(ex.Message);
         }
         catch (ArgumentException ex)
@@ -66,6 +66,48 @@ public class ExceptionHandlingMiddleware
         {
             _logger.LogError(ex, ex.Message);
             httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CatalogBrandDoesNotExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CatalogTypeDoesNotExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CatalogItemDoesNotExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CatalogBrandAlreadyExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CatalogItemReviewAlreadyExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CatalogItemReviewDoesNotExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CatalogTypeAlreadyExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
             await httpContext.Response.WriteAsync(ex.Message);
         }
         catch (Exception ex)

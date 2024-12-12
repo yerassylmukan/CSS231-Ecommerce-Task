@@ -77,7 +77,7 @@ public class IdentityService : IIdentityService
         foreach (var role in roles)
         {
             var roleExist = await _roleManager.RoleExistsAsync(role);
-            if (!roleExist) throw new RoleDoesNotExistException(role);
+            if (!roleExist) throw new RoleDoesNotExistsException(role);
 
             await _userManager.AddToRoleAsync(user, role);
         }

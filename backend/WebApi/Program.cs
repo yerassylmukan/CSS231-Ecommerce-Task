@@ -1,9 +1,10 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using ApplicationCore.Constants;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Services;
 using Infrastructure.Data;
 using Infrastructure.Identity;
-using Infrastructure.Repository;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -26,11 +27,17 @@ builder.Services.AddDbContext<AppIdentityDbContext>(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
 builder.Services.AddScoped<ITokenClaimsService, TokenClaimService>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ICatalogItemService, CatalogItemService>();
+builder.Services.AddScoped<ICatalogItemReviewService, CatalogItemReviewService>();
+builder.Services.AddScoped<ICatalogTypeService, CatalogTypeService>();
+builder.Services.AddScoped<ICatalogBrandService, CatalogBrandService>();
+
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppIdentityDbContext>()
@@ -56,7 +63,9 @@ builder.Services.AddAuthentication(config =>
         };
     });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddLogging();
 

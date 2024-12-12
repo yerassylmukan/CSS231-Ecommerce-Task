@@ -1,7 +1,10 @@
-﻿namespace WebApi.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApi.Models;
 
 public class AddUserToRolesModel
 {
-    public string Email { get; set; }
-    public IEnumerable<string> Roles { get; set; }
+    [Required] public string Email { get; set; }
+
+    [Required] public IEnumerable<string> Roles { get; set; }
 }

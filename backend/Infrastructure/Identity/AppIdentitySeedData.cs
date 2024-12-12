@@ -13,6 +13,7 @@ public class AppIdentitySeedData
         await EnsureRoleExistsAsync(roleManager, "Admin");
         await EnsureRoleExistsAsync(roleManager, "BasicUser");
         await EnsureRoleExistsAsync(roleManager, "ProductManager");
+        await EnsureRoleExistsAsync(roleManager, "InventoryManager");
         await EnsureRoleExistsAsync(roleManager, "OrderManager");
         await EnsureRoleExistsAsync(roleManager, "UserManager");
 

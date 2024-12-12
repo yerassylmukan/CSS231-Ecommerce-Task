@@ -6,9 +6,9 @@ using WebApi.Models;
 
 namespace WebApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize]
 public class ApplicationUserController : ControllerBase
 {
     private readonly IApplicationUserService _service;
@@ -22,9 +22,6 @@ public class ApplicationUserController : ControllerBase
     public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByUserName(string userName,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
@@ -49,9 +46,6 @@ public class ApplicationUserController : ControllerBase
     public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByEmail(string email,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
@@ -76,9 +70,6 @@ public class ApplicationUserController : ControllerBase
     public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByUserId(string userId,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
@@ -99,14 +90,11 @@ public class ApplicationUserController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("{userId}")]
+    [HttpPut("{userId}")]
     public async Task<IActionResult> UpdateProfileInformation(string userId,
         [FromBody] UpdateProfileInformationModel model,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 

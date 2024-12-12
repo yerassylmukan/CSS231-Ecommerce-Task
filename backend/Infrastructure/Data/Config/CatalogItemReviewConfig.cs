@@ -24,10 +24,5 @@ public class CatalogItemReviewConfig : IEntityTypeConfiguration<CatalogItemRevie
         builder.Property(r => r.ReviewText)
             .HasMaxLength(256)
             .IsRequired();
-
-        builder.HasOne(r => r.CatalogItem)
-            .WithMany(ci => ci.Reviews)
-            .HasForeignKey(r => r.CatalogItemId)
-            .IsRequired(false);
     }
 }

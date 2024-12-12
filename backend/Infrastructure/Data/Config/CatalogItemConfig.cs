@@ -42,5 +42,10 @@ public class CatalogItemConfig : IEntityTypeConfiguration<CatalogItem>
             .WithMany(ct => ct.CatalogItems)
             .HasForeignKey(ci => ci.CatalogTypeId)
             .IsRequired();
+        
+        builder.HasMany(ci => ci.Reviews)
+            .WithOne(r => r.CatalogItem)
+            .HasForeignKey(r => r.CatalogItemId)
+            .IsRequired();
     }
 }

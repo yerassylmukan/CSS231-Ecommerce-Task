@@ -2,7 +2,7 @@
 
 public class UserAlreadyExistsException : Exception
 {
-    public UserAlreadyExistsException(string username) : base($"User {username} already exists")
+    public UserAlreadyExistsException(string userName) : base($"User {userName} already exists")
     {
     }
 }

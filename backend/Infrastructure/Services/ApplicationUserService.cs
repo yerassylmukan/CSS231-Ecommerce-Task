@@ -52,7 +52,7 @@ public class ApplicationUserService : IApplicationUserService
         return (user.Id!, user.FirstName!, user.LastName!, user.UserName!, user.Email!, user.ProfilePictureUrl, roles);
     }
 
-    public async Task UpdateProfileInformationAsync(string userId, string? firstName, string lastName, string email,
+    public async Task UpdateProfileInformationAsync(string userId, string firstName, string lastName, string email,
         string profilePictureUrl)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);

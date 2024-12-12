@@ -17,7 +17,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> Register([FromBody] RegisterRequestModel registerRequest,
+    public async Task<ActionResult<string>> Register([FromBody] RegisterModel register,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -26,8 +26,8 @@ public class AuthController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        var token = await _identityService.CreateUserAsync(registerRequest.Email, registerRequest.Password,
-            registerRequest.FirstName, registerRequest.LastName, registerRequest.Email);
+        var token = await _identityService.CreateUserAsync(register.Email, register.Password,
+            register.FirstName, register.LastName, register.Email);
 
         return Ok(token);
     }
@@ -49,8 +49,15 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin,UserManager")]
-    public async Task<ActionResult<string>> AddUserToRoles([FromBody] AddUserToRolesModel addUserToRolesModel)
+    public async Task<ActionResult<string>> AddUserToRoles([FromBody] AddUserToRolesModel addUserToRolesModel,
+        CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (cancellationToken.IsCancellationRequested)
+            return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
+
         var newToken = await _identityService.AddUserToRolesAsync(addUserToRolesModel.Email, addUserToRolesModel.Roles);
 
         return Ok(newToken);
@@ -58,17 +65,32 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> RequestPasswordReset(
-        [FromBody] RequestPasswordResetModel requestPasswordResetModel)
+        [FromBody] RequestPasswordResetModel requestPasswordResetModel, CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (cancellationToken.IsCancellationRequested)
+            return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
+
         await _identityService.SendPasswordResetTokenAsync(requestPasswordResetModel.Email,
             requestPasswordResetModel.LinkToResetPassword);
-        return Ok("Password reset link sent.");
+
+        return NoContent();
     }
 
     [HttpPost]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel resetPassword)
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel resetPassword,
+        CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (cancellationToken.IsCancellationRequested)
+            return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
+
         await _identityService.ResetPasswordAsync(resetPassword.Email, resetPassword.Token, resetPassword.NewPassword);
-        return Ok("Password has been reset.");
+
+        return NoContent();
     }
 }

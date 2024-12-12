@@ -1,8 +1,12 @@
-﻿namespace WebApi.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApi.Models;
 
 public class ResetPasswordModel
 {
-    public string Email { get; set; }
-    public string Token { get; set; }
-    public string NewPassword { get; set; }
+    [Required] public string Email { get; set; }
+
+    [Required] public string Token { get; set; }
+
+    [Required] public string NewPassword { get; set; }
 }
