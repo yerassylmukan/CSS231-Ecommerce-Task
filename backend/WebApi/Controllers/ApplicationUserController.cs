@@ -98,8 +98,8 @@ public class ApplicationUserController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateProfileInformationAsync(userId, model.FirstName, model.LastName, model.Email,
-            model.ProfilePictureUrl);
+        await _service.UpdateProfileInformationAsync(userId, model.FirstName!, model.LastName!,
+            model.ProfilePictureUrl!);
 
         return Ok();
     }

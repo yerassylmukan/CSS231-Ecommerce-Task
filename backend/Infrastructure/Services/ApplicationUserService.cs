@@ -52,9 +52,11 @@ public class ApplicationUserService : IApplicationUserService
         return (user.Id!, user.FirstName!, user.LastName!, user.UserName!, user.Email!, user.ProfilePictureUrl, roles);
     }
 
-    public async Task UpdateProfileInformationAsync(string userId, string firstName, string lastName, string email,
+    public async Task UpdateProfileInformationAsync(string userId, string firstName, string lastName,
         string profilePictureUrl)
     {
+        if (userId == null) throw new ArgumentNullException(nameof(userId));
+        
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
         if (user == null) throw new UserNotFoundException(userId);
 
@@ -69,13 +71,6 @@ public class ApplicationUserService : IApplicationUserService
         if (!string.IsNullOrEmpty(lastName) && user.LastName != lastName)
         {
             user.LastName = lastName;
-            isUpdated = true;
-        }
-
-        if (!string.IsNullOrEmpty(email) && user.Email != email)
-        {
-            user.Email = email;
-            user.UserName = email;
             isUpdated = true;
         }
 
