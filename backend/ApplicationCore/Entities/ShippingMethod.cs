@@ -1,6 +1,6 @@
-﻿namespace ApplicationCore.Entities.OrderAggregate;
+﻿namespace ApplicationCore.Entities;
 
-public class ShippingMethod // ValueObject
+public class ShippingMethod // value object
 {
     public ShippingMethod(string name, decimal cost, TimeSpan deliveryTime)
     {

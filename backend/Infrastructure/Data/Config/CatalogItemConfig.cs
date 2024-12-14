@@ -1,4 +1,4 @@
-﻿using ApplicationCore.Entities.CatalogAggregate;
+﻿using ApplicationCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -42,7 +42,7 @@ public class CatalogItemConfig : IEntityTypeConfiguration<CatalogItem>
             .WithMany(ct => ct.CatalogItems)
             .HasForeignKey(ci => ci.CatalogTypeId)
             .IsRequired();
-        
+
         builder.HasMany(ci => ci.Reviews)
             .WithOne(r => r.CatalogItem)
             .HasForeignKey(r => r.CatalogItemId)

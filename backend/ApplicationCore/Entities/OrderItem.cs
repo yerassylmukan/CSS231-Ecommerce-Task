@@ -1,4 +1,4 @@
-﻿namespace ApplicationCore.Entities.OrderAggregate;
+﻿namespace ApplicationCore.Entities;
 
 public class OrderItem
 {

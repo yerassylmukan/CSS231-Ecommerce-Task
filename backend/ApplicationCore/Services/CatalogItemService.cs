@@ -1,6 +1,6 @@
 ﻿using ApplicationCore.CustomMappers;
 using ApplicationCore.DTOs;
-using ApplicationCore.Entities.CatalogAggregate;
+using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +27,8 @@ public class CatalogItemService : ICatalogItemService
 
     public async Task<CatalogItemDTO> GetCatalogItemByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var item = await _context.CatalogItems.Include(ci => ci.Reviews).FirstOrDefaultAsync(ci => ci.Id == id, cancellationToken);
+        var item = await _context.CatalogItems.Include(ci => ci.Reviews)
+            .FirstOrDefaultAsync(ci => ci.Id == id, cancellationToken);
 
         if (item == null) throw new CatalogItemDoesNotExistsException(id);
 
@@ -43,7 +44,8 @@ public class CatalogItemService : ICatalogItemService
         if (catalogType == null)
             throw new CatalogTypeDoesNotExistsException(catalogTypeName);
 
-        var item = await _context.CatalogItems.Include(ci => ci.Reviews).FirstOrDefaultAsync(ci => ci.CatalogType.Type == catalogTypeName,
+        var item = await _context.CatalogItems.Include(ci => ci.Reviews).FirstOrDefaultAsync(
+            ci => ci.CatalogType.Type == catalogTypeName,
             cancellationToken);
 
         if (item == null) throw new ArgumentException(catalogTypeName);
@@ -59,7 +61,8 @@ public class CatalogItemService : ICatalogItemService
 
         if (brandExists == null) throw new CatalogBrandDoesNotExistsException(catalogBrandName);
 
-        var item = await _context.CatalogItems.Include(ci => ci.Reviews).FirstOrDefaultAsync(ci => ci.CatalogBrand.Brand == catalogBrandName,
+        var item = await _context.CatalogItems.Include(ci => ci.Reviews).FirstOrDefaultAsync(
+            ci => ci.CatalogBrand.Brand == catalogBrandName,
             cancellationToken);
 
         if (item == null) throw new ArgumentException(catalogBrandName);

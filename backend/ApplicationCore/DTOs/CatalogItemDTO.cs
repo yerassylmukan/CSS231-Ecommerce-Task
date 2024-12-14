@@ -1,6 +1,4 @@
-﻿using ApplicationCore.Entities.CatalogAggregate;
-
-namespace ApplicationCore.DTOs;
+﻿namespace ApplicationCore.DTOs;
 
 public class CatalogItemDTO
 {

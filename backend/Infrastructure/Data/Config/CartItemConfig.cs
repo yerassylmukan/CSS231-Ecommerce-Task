@@ -1,4 +1,4 @@
-﻿using ApplicationCore.Entities.BasketAggregate;
+﻿using ApplicationCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

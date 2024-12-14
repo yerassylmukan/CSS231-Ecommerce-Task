@@ -1,4 +1,4 @@
-﻿namespace ApplicationCore.Entities.WishlistAggregate;
+﻿namespace ApplicationCore.Entities;
 
 public class Wishlist
 {

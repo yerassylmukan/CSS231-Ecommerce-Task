@@ -1,8 +1,5 @@
 ﻿using System.Reflection;
-using ApplicationCore.Entities.BasketAggregate;
-using ApplicationCore.Entities.CatalogAggregate;
-using ApplicationCore.Entities.OrderAggregate;
-using ApplicationCore.Entities.WishlistAggregate;
+using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

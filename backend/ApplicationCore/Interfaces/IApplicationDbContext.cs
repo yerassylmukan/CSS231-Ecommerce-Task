@@ -1,7 +1,4 @@
-﻿using ApplicationCore.Entities.BasketAggregate;
-using ApplicationCore.Entities.CatalogAggregate;
-using ApplicationCore.Entities.OrderAggregate;
-using ApplicationCore.Entities.WishlistAggregate;
+﻿using ApplicationCore.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationCore.Interfaces;

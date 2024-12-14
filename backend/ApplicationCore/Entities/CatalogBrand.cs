@@ -1,9 +1,9 @@
-﻿namespace ApplicationCore.Entities.CatalogAggregate;
+﻿namespace ApplicationCore.Entities;
 
-public class CatalogType
+public class CatalogBrand
 {
     public int Id { get; set; }
-    public string Type { get; set; }
+    public string Brand { get; set; }
 
     public ICollection<CatalogItem> CatalogItems { get; } = new List<CatalogItem>();
 }

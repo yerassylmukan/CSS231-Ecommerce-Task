@@ -1,5 +1,5 @@
 ﻿using ApplicationCore.DTOs;
-using ApplicationCore.Entities.CatalogAggregate;
+using ApplicationCore.Entities;
 
 namespace ApplicationCore.CustomMappers;
 

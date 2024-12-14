@@ -1,6 +1,6 @@
 ﻿using ApplicationCore.CustomMappers;
 using ApplicationCore.DTOs;
-using ApplicationCore.Entities.CatalogAggregate;
+using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -65,8 +65,9 @@ public class CatalogItemReviewService : ICatalogItemReviewService
         var reviewExists = _context.Reviews.Any(r => r.UserId == userId && r.CatalogItemId == catalogItemId);
 
         if (reviewExists) throw new CatalogItemReviewAlreadyExistsException();
-        
-        var item = await _context.CatalogItems.Include(ci => ci.Reviews).FirstOrDefaultAsync(c => c.Id == catalogItemId, cancellationToken);
+
+        var item = await _context.CatalogItems.Include(ci => ci.Reviews)
+            .FirstOrDefaultAsync(c => c.Id == catalogItemId, cancellationToken);
 
         if (item == null) throw new CatalogItemDoesNotExistsException(catalogItemId);
 
@@ -77,7 +78,7 @@ public class CatalogItemReviewService : ICatalogItemReviewService
             ReviewText = reviewText,
             CatalogItemId = catalogItemId
         };
-        
+
         _context.Reviews.Add(review);
         await _context.SaveChangesAsync(cancellationToken);
 
@@ -91,7 +92,7 @@ public class CatalogItemReviewService : ICatalogItemReviewService
 
         if (review == null)
             throw new CatalogItemReviewDoesNotExistsException();
-        
+
         var isChanged = false;
 
         if (!string.IsNullOrEmpty(review.ReviewText) && review.ReviewText != reviewText)
@@ -115,7 +116,7 @@ public class CatalogItemReviewService : ICatalogItemReviewService
 
         if (review == null)
             throw new CatalogItemReviewDoesNotExistsException();
-        
+
         _context.Reviews.Remove(review);
         await _context.SaveChangesAsync(cancellationToken);
     }

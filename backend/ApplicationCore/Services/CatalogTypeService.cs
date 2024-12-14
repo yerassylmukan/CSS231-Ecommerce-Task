@@ -1,6 +1,6 @@
 ﻿using ApplicationCore.CustomMappers;
 using ApplicationCore.DTOs;
-using ApplicationCore.Entities.CatalogAggregate;
+using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using Microsoft.EntityFrameworkCore;

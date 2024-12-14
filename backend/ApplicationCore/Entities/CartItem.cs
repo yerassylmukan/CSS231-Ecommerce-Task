@@ -1,4 +1,4 @@
-﻿namespace ApplicationCore.Entities.BasketAggregate;
+﻿namespace ApplicationCore.Entities;
 
 public class CartItem
 {

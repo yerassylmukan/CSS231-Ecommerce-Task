@@ -1,4 +1,4 @@
-﻿namespace ApplicationCore.Entities.CatalogAggregate;
+﻿namespace ApplicationCore.Entities;
 
 public class CatalogItemReview
 {
