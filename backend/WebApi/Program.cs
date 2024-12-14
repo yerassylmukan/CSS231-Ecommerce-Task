@@ -113,6 +113,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.Logger.LogInformation("Web API created...");
+
+app.Logger.LogInformation("Seeding Database...");
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -126,7 +130,7 @@ using (var scope = app.Services.CreateScope())
         var applicationDbContext = services.GetRequiredService<ApplicationDbContext>();
 
         await AppIdentitySeedData.SeedAsync(identityContext, userManager, roleManager);
-        ApplicationSeedData.Seed(applicationDbContext);
+        await ApplicationSeedData.SeedAsync(applicationDbContext, app.Logger);
     }
     catch (Exception e)
     {
