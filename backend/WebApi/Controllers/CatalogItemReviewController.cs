@@ -80,15 +80,14 @@ public class CatalogItemReviewController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateCatalogItemReviewAsync(id, model.Rating, model.ReviewText, cancellationToken);
+        await _service.UpdateCatalogItemReviewAsync(id, model.Rating, model.ReviewText!, cancellationToken);
 
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin,BasicUser")]
-    public async Task<IActionResult> DeleteCatalogItemReview(int id,
-        [FromBody] UpdateCatalogItemRevirewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteCatalogItemReview(int id, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");

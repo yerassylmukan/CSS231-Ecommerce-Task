@@ -78,7 +78,7 @@ public class CatalogItemController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateCatalogItemDetailsAsync(id, model.Name, model.Description, model.Price,
+        await _service.UpdateCatalogItemDetailsAsync(id, model.Name!, model.Description!, model.Price,
             cancellationToken);
 
         return NoContent();

@@ -56,7 +56,7 @@ public class ApplicationUserService : IApplicationUserService
         string profilePictureUrl)
     {
         if (userId == null) throw new ArgumentNullException(nameof(userId));
-        
+
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
         if (user == null) throw new UserNotFoundException(userId);
 

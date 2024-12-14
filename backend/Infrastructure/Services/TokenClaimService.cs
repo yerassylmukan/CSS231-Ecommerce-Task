@@ -53,11 +53,11 @@ public class TokenClaimService : ITokenClaimsService
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-            new(ClaimTypes.Name, "Anonymous User"),
+            new(ClaimTypes.Name, "Anonymous User")
         };
-        
+
         foreach (var role in roles) claims.Add(new Claim(ClaimTypes.Role, role));
-        
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims.ToArray()),

@@ -10,10 +10,12 @@ namespace ApplicationCore.Services;
 public class CatalogItemService : ICatalogItemService
 {
     private readonly IApplicationDbContext _context;
+    private readonly IEmailSender _emailSender;
 
-    public CatalogItemService(IApplicationDbContext context)
+    public CatalogItemService(IApplicationDbContext context, IEmailSender emailSender)
     {
         _context = context;
+        _emailSender = emailSender;
     }
 
     public async Task<IEnumerable<CatalogItemDTO>> GetCatalogItemsAsync(CancellationToken cancellationToken)
@@ -133,6 +135,10 @@ public class CatalogItemService : ICatalogItemService
             item.StockQuantity = stockQuantity;
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        if (item.StockQuantity < 1)
+            await _emailSender.EmailSendAsync("inventorymanager@gmail.com", $"Running out of product - {item.Name}",
+                $"I would like to inform you that the product with ID {item.Id} is running out.", cancellationToken);
     }
 
     public async Task UpdateCatalogItemPictureUrlAsync(int id, string pictureUrl, CancellationToken cancellationToken)

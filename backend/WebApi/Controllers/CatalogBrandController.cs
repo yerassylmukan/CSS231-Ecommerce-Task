@@ -60,13 +60,16 @@ public class CatalogBrandController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCatalogBrand(int id, [FromBody] string brandName,
+    public async Task<IActionResult> UpdateCatalogBrand(int id, [FromBody] UpdateCatalogBrandModel model,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateCatalogBrandAsync(id, brandName, cancellationToken);
+        await _service.UpdateCatalogBrandAsync(id, model.BandName, cancellationToken);
 
         return NoContent();
     }
