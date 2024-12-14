@@ -16,6 +16,7 @@ public class AppIdentitySeedData
         await EnsureRoleExistsAsync(roleManager, "InventoryManager");
         await EnsureRoleExistsAsync(roleManager, "OrderManager");
         await EnsureRoleExistsAsync(roleManager, "UserManager");
+        await EnsureRoleExistsAsync(roleManager, "Anonymous");
 
         var adminUserName = "admin@gmail.com";
         var adminUser = new ApplicationUser

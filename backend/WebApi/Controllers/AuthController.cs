@@ -48,6 +48,12 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
+    public ActionResult<string> AuthenticateAnonymousUser()
+    {
+        return Ok(_identityService.AuthenticateAnonymousUser());
+    }
+
+    [HttpPost]
     [Authorize(Roles = "Admin,UserManager")]
     public async Task<ActionResult<string>> AddUserToRoles([FromBody] AddUserToRolesModel addUserToRolesModel,
         CancellationToken cancellationToken)

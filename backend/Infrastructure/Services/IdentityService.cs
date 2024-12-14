@@ -69,6 +69,11 @@ public class IdentityService : IIdentityService
         return await _tokenClaimsService.GetTokenAsync(user.UserName);
     }
 
+    public string AuthenticateAnonymousUser()
+    {
+        return _tokenClaimsService.GetAnonymousToken();
+    }
+
     public async Task<string> AddUserToRolesAsync(string email, IEnumerable<string> roles)
     {
         var user = await _userManager.FindByEmailAsync(email)
