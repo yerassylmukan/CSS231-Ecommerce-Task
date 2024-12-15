@@ -137,7 +137,7 @@ public class CatalogItemService : ICatalogItemService
         }
 
         if (item.StockQuantity < 1)
-            await _emailSender.EmailSendAsync("inventorymanager@gmail.com", $"Running out of product - {item.Name}",
+            await _emailSender.EmailSendAsync("admin@gmail.com", $"Running out of product - {item.Name}",
                 $"I would like to inform you that the product with ID {item.Id} is running out.", cancellationToken);
     }
 

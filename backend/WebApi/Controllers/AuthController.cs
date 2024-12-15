@@ -54,7 +54,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin,UserManager")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<string>> AddUserToRoles([FromBody] AddUserToRolesModel addUserToRolesModel,
         CancellationToken cancellationToken)
     {

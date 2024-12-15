@@ -56,7 +56,7 @@ public class CatalogItemController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin,ProductManager")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<CatalogItemDTO>> CreateCatalogItem([FromBody] CreateCatalogItemModel model,
         CancellationToken cancellationToken)
     {
@@ -71,7 +71,7 @@ public class CatalogItemController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin,ProductManager")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCatalogItemDetails(int id, [FromBody] UpdateCatalogItemModel model,
         CancellationToken cancellationToken)
     {
@@ -85,7 +85,7 @@ public class CatalogItemController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin,ProductManager")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCatalogItemStockQuantity(int id,
         [FromBody] int stockQuantity, CancellationToken cancellationToken)
     {
@@ -98,7 +98,7 @@ public class CatalogItemController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin,ProductManager")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCatalogItemPictureUrl(int id, [FromBody] string pictureUrl,
         CancellationToken cancellationToken)
     {
@@ -111,7 +111,7 @@ public class CatalogItemController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin,ProductManager")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCatalogType(int id, [FromBody] int catalogTypeId,
         CancellationToken cancellationToken)
     {
@@ -124,7 +124,7 @@ public class CatalogItemController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin,ProductManager")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCatalogBrand(int id, [FromBody] int catalogBrandId,
         CancellationToken cancellationToken)
     {
@@ -137,7 +137,7 @@ public class CatalogItemController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin,ProductManager")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCatalogItem(int id, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)

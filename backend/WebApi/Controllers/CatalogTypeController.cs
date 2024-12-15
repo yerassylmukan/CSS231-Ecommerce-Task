@@ -7,7 +7,7 @@ using WebApi.Models;
 namespace WebApi.Controllers;
 
 [ApiController]
-[Authorize(Roles = "Admin,ProductManager")]
+[Authorize(Roles = "Admin")]
 [Route("api/[controller]/[action]")]
 public class CatalogTypeController : ControllerBase
 {
