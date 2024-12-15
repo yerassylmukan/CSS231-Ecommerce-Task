@@ -107,12 +107,18 @@ public class IdentityService : IIdentityService
         Random r = new Random();
         int code = r.Next(100000, 999999);
         
+        var resetData = new PasswordResetData
+        {
+            Code = code,
+            Email = email
+        };
+
         var cacheKey = $"PasswordReset:{email}";
-        var expiration = TimeSpan.FromMinutes(15);
+        var expiration = TimeSpan.FromMinutes(15); // Set code expiration time.
 
         await _cache.SetStringAsync(
             cacheKey,
-            JsonSerializer.Serialize(new { Code = code, Email = email }),
+            JsonSerializer.Serialize(resetData),
             new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = expiration
@@ -123,8 +129,7 @@ public class IdentityService : IIdentityService
         await _emailSender.EmailSendAsync(
             email,
             "Password Reset Request",
-            $"To reset your password, click the link: {linkToResetPassword}'\n'" +
-            $"Your code is {code}",
+            $"To reset your password, click the link: {linkToResetPassword}. Your code is {code}",
             CancellationToken.None
         );
     }
@@ -137,13 +142,15 @@ public class IdentityService : IIdentityService
         if (cachedData == null)
             throw new ArgumentException("Password reset code expired or not found.");
 
-        var storedData = JsonSerializer.Deserialize<dynamic>(cachedData);
-        
-        if (storedData?.Code != code)
+        var jsonElement = JsonSerializer.Deserialize<JsonElement>(cachedData);
+
+        if (!jsonElement.TryGetProperty("Code", out var codeProperty) || codeProperty.GetInt32() != code)
             throw new InvalidOperationException("Invalid password reset code.");
 
-        var user = await _userManager.FindByEmailAsync(email)
-                   ?? throw new UserNotFoundException(email);
+        var user = await _userManager.FindByEmailAsync(email);
+        
+        if (user == null)
+            throw new UserNotFoundException(email);
 
         await _userManager.RemovePasswordAsync(user);
         await _userManager.AddPasswordAsync(user, newPassword);
