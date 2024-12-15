@@ -9,5 +9,5 @@ public interface IIdentityService
     string AuthenticateAnonymousUser();
     Task<string> AddUserToRolesAsync(string email, IEnumerable<string> roles);
     Task SendPasswordResetTokenAsync(string email, string linkToResetPassword);
-    Task ResetPasswordAsync(string email, string token, string newPassword);
+    Task ResetPasswordAsync(string email, int code, string newPassword);
 }

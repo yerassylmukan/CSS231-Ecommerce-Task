@@ -95,7 +95,7 @@ public class AuthController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _identityService.ResetPasswordAsync(resetPassword.Email, resetPassword.Token, resetPassword.NewPassword);
+        await _identityService.ResetPasswordAsync(resetPassword.Email, resetPassword.Code, resetPassword.NewPassword);
 
         return NoContent();
     }

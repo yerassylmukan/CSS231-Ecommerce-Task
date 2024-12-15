@@ -1,14 +1,18 @@
-﻿using ApplicationCore.Exceptions;
+﻿using System.Text.Json;
+using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Services;
 
 public class IdentityService : IIdentityService
 {
+    private readonly IDistributedCache _cache;
     private readonly IEmailSender _emailSender;
     private readonly ILogger<IdentityService> _logger;
     private readonly RoleManager<IdentityRole> _roleManager;
@@ -16,10 +20,11 @@ public class IdentityService : IIdentityService
     private readonly ITokenClaimsService _tokenClaimsService;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public IdentityService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
+    public IdentityService(IDistributedCache cache, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
         SignInManager<ApplicationUser> signInManager, ITokenClaimsService tokenClaimsService, IEmailSender emailSender,
         ILogger<IdentityService> logger)
     {
+        _cache = cache;
         _userManager = userManager;
         _roleManager = roleManager;
         _signInManager = signInManager;
@@ -94,39 +99,57 @@ public class IdentityService : IIdentityService
 
     public async Task SendPasswordResetTokenAsync(string email, string linkToResetPassword)
     {
-        var user = await _userManager.FindByEmailAsync(email)
-                   ?? throw new UserNotFoundException(email);
+        var user = await _userManager.FindByEmailAsync(email);
 
-        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        if (user == null)
+            throw new UserNotFoundException(email);
 
-        var resetLink =
-            $"{linkToResetPassword}?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(token)}";
+        Random r = new Random();
+        int code = r.Next(100000, 999999);
+        
+        var cacheKey = $"PasswordReset:{email}";
+        var expiration = TimeSpan.FromMinutes(15);
 
-        _logger.LogInformation("Password reset token: {Token}", token);
+        await _cache.SetStringAsync(
+            cacheKey,
+            JsonSerializer.Serialize(new { Code = code, Email = email }),
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = expiration
+            });
+
+        _logger.LogInformation($"Password reset code: {code}");
 
         await _emailSender.EmailSendAsync(
             email,
             "Password Reset Request",
-            $"To reset your password, click the link: {resetLink}'\n'" +
-            $"Your token is {token}",
+            $"To reset your password, click the link: {linkToResetPassword}'\n'" +
+            $"Your code is {code}",
             CancellationToken.None
         );
     }
 
-    public async Task ResetPasswordAsync(string email, string token, string newPassword)
+    public async Task ResetPasswordAsync(string email, int code, string newPassword)
     {
+        var cacheKey = $"PasswordReset:{email}";
+        var cachedData = await _cache.GetStringAsync(cacheKey);
+
+        if (cachedData == null)
+            throw new ArgumentException("Password reset code expired or not found.");
+
+        var storedData = JsonSerializer.Deserialize<dynamic>(cachedData);
+        
+        if (storedData?.Code != code)
+            throw new InvalidOperationException("Invalid password reset code.");
+
         var user = await _userManager.FindByEmailAsync(email)
                    ?? throw new UserNotFoundException(email);
 
-        _logger.LogInformation("Initiating password reset for email: {Email}", email);
-
-        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-        if (!result.Succeeded)
-        {
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new Exception($"Password reset failed: {errors}");
-        }
+        await _userManager.RemovePasswordAsync(user);
+        await _userManager.AddPasswordAsync(user, newPassword);
 
         _logger.LogInformation("Password reset successful for user {Email}", email);
+
+        await _cache.RemoveAsync(cacheKey);
     }
 }
