@@ -50,7 +50,7 @@ public class CatalogItemService : ICatalogItemService
             ci => ci.CatalogType.Type == catalogTypeName,
             cancellationToken);
 
-        if (item == null) throw new ArgumentException(catalogTypeName);
+        if (item == null) throw new CatalogItemDoesNotExistsException(catalogTypeName);
 
         return item.MapToDTO();
     }
@@ -67,7 +67,7 @@ public class CatalogItemService : ICatalogItemService
             ci => ci.CatalogBrand.Brand == catalogBrandName,
             cancellationToken);
 
-        if (item == null) throw new ArgumentException(catalogBrandName);
+        if (item == null) throw new CatalogItemDoesNotExistsException(catalogBrandName);
 
         return item.MapToDTO();
     }

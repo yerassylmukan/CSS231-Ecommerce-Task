@@ -12,5 +12,5 @@ public class RegisterModel
 
     [Required] public string LastName { get; set; }
 
-    public string ProfilePictureUrl { get; set; }
+    public string? ProfilePictureUrl { get; set; }
 }

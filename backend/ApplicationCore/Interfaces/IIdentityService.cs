@@ -10,4 +10,6 @@ public interface IIdentityService
     Task<string> AddUserToRolesAsync(string email, IEnumerable<string> roles);
     Task SendPasswordResetTokenAsync(string email, string linkToResetPassword);
     Task ResetPasswordAsync(string email, int code, string newPassword);
+    Task<string> ChangeEmailAsync(string email, string newEmail);
+    Task ChangePasswordAsync(string email, string oldPassword, string newPassword);
 }

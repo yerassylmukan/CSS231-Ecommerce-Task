@@ -38,6 +38,12 @@ public class ExceptionHandlingMiddleware
             httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             await httpContext.Response.WriteAsync(ex.Message);
         }
+        catch (InvalidPasswordException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
         catch (UnauthorizedAccessException ex)
         {
             _logger.LogError(ex, ex.Message);

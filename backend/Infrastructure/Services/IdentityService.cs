@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Services;
 
@@ -20,17 +19,17 @@ public class IdentityService : IIdentityService
     private readonly ITokenClaimsService _tokenClaimsService;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public IdentityService(IDistributedCache cache, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-        SignInManager<ApplicationUser> signInManager, ITokenClaimsService tokenClaimsService, IEmailSender emailSender,
-        ILogger<IdentityService> logger)
+    public IdentityService(IDistributedCache cache, IEmailSender emailSender, ILogger<IdentityService> logger,
+        RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> signInManager,
+        ITokenClaimsService tokenClaimsService, UserManager<ApplicationUser> userManager)
     {
         _cache = cache;
-        _userManager = userManager;
+        _emailSender = emailSender;
+        _logger = logger;
         _roleManager = roleManager;
         _signInManager = signInManager;
         _tokenClaimsService = tokenClaimsService;
-        _emailSender = emailSender;
-        _logger = logger;
+        _userManager = userManager;
     }
 
     public async Task<string> CreateUserAsync(string email, string password, string firstName, string lastName,
@@ -50,17 +49,13 @@ public class IdentityService : IIdentityService
 
         var result = await _userManager.CreateAsync(user, password);
         if (!result.Succeeded)
-        {
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new Exception($"User creation failed: {errors}");
-        }
+            throw new InvalidPasswordException();
 
         await _userManager.AddToRoleAsync(user, "BasicUser");
 
         await _signInManager.PasswordSignInAsync(user, password, false, false);
 
-        var token = await _tokenClaimsService.GetTokenAsync(user.UserName);
-        return token;
+        return await _tokenClaimsService.GetTokenAsync(user.UserName);;
     }
 
     public async Task<string> AuthenticateUserAsync(string email, string password)
@@ -92,9 +87,7 @@ public class IdentityService : IIdentityService
             await _userManager.AddToRoleAsync(user, role);
         }
 
-        var newToken = await _tokenClaimsService.GetTokenAsync(user.UserName);
-
-        return newToken;
+        return await _tokenClaimsService.GetTokenAsync(user.UserName);;
     }
 
     public async Task SendPasswordResetTokenAsync(string email, string linkToResetPassword)
@@ -104,9 +97,9 @@ public class IdentityService : IIdentityService
         if (user == null)
             throw new UserNotFoundException(email);
 
-        Random r = new Random();
-        int code = r.Next(100000, 999999);
-        
+        var r = new Random();
+        var code = r.Next(100000, 999999);
+
         var resetData = new PasswordResetData
         {
             Code = code,
@@ -114,7 +107,7 @@ public class IdentityService : IIdentityService
         };
 
         var cacheKey = $"PasswordReset:{email}";
-        var expiration = TimeSpan.FromMinutes(15); // Set code expiration time.
+        var expiration = TimeSpan.FromMinutes(15);
 
         await _cache.SetStringAsync(
             cacheKey,
@@ -148,15 +141,50 @@ public class IdentityService : IIdentityService
             throw new InvalidOperationException("Invalid password reset code.");
 
         var user = await _userManager.FindByEmailAsync(email);
-        
+
         if (user == null)
             throw new UserNotFoundException(email);
 
         await _userManager.RemovePasswordAsync(user);
-        await _userManager.AddPasswordAsync(user, newPassword);
+        var result = await _userManager.AddPasswordAsync(user, newPassword);
+        
+        if (!result.Succeeded)
+            throw new InvalidPasswordException();
 
         _logger.LogInformation("Password reset successful for user {Email}", email);
 
         await _cache.RemoveAsync(cacheKey);
+    }
+
+    public async Task<string> ChangeEmailAsync(string email, string newEmail)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+            throw new UserNotFoundException(email);
+        
+        var userExists = await _userManager.FindByEmailAsync(newEmail);
+
+        if (userExists != null)
+            throw new UserAlreadyExistsException(newEmail);
+        
+        user.Email = newEmail;
+        user.UserName = newEmail;
+        await _userManager.UpdateAsync(user);
+        
+        return await _tokenClaimsService.GetTokenAsync(user.UserName);
+    }
+
+    public async Task ChangePasswordAsync(string email, string oldPassword, string newPassword)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+            throw new UserNotFoundException(email);
+        
+        var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+
+        if (!result.Succeeded)
+            throw new InvalidPasswordException();
     }
 }

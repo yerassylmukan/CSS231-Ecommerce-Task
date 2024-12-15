@@ -99,4 +99,34 @@ public class AuthController : ControllerBase
 
         return NoContent();
     }
+    
+    [HttpPost]
+    [Authorize(Roles = "Admin,BasicUser")]
+    public async Task<ActionResult<string>> ChangeEmail([FromBody] ChangeEmailModel model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        if (cancellationToken.IsCancellationRequested)
+            return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
+        
+        var result = await _identityService.ChangeEmailAsync(model.OldEmail, model.NewEmail);
+        
+        return Ok(result);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin,BasicUser")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        if (cancellationToken.IsCancellationRequested)
+            return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
+        
+        await _identityService.ChangePasswordAsync(model.Email, model.OldPassword, model.NewPassword);
+        
+        return NoContent();
+    }
 }
