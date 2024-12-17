@@ -81,7 +81,7 @@ public class CatalogItemController : ControllerBase
         await _service.UpdateCatalogItemDetailsAsync(id, model.Name!, model.Description!, model.Price,
             cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpPut("{id}")]
@@ -94,7 +94,7 @@ public class CatalogItemController : ControllerBase
 
         await _service.UpdateCatalogItemStockQuantityAsync(id, stockQuantity, cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpPut("{id}")]
@@ -107,7 +107,7 @@ public class CatalogItemController : ControllerBase
 
         await _service.UpdateCatalogItemPictureUrlAsync(id, pictureUrl, cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpPut("{id}")]
@@ -120,7 +120,7 @@ public class CatalogItemController : ControllerBase
 
         await _service.UpdateCatalogTypeAsync(id, catalogTypeId, cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpPut("{id}")]
@@ -133,7 +133,7 @@ public class CatalogItemController : ControllerBase
 
         await _service.UpdateCatalogBrandAsync(id, catalogBrandId, cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpDelete("{id}")]
@@ -145,6 +145,6 @@ public class CatalogItemController : ControllerBase
 
         await _service.DeleteCatalogItemAsync(id, cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 }

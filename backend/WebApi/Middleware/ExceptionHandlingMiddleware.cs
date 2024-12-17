@@ -35,7 +35,7 @@ public class ExceptionHandlingMiddleware
         catch (IncorrectPasswordException ex)
         {
             _logger.LogError(ex, ex.Message);
-            httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             await httpContext.Response.WriteAsync(ex.Message);
         }
         catch (InvalidPasswordException ex)
@@ -114,6 +114,42 @@ public class ExceptionHandlingMiddleware
         {
             _logger.LogError(ex, ex.Message);
             httpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (WishlistDoesNotExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (WishlistItemDoesNotExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (OutOfStockException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CatalogItemAlreadyInWishlistException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CartDoesNotExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await httpContext.Response.WriteAsync(ex.Message);
+        }
+        catch (CartItemDoesNotExistsException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
             await httpContext.Response.WriteAsync(ex.Message);
         }
         catch (Exception ex)

@@ -55,7 +55,8 @@ public class IdentityService : IIdentityService
 
         await _signInManager.PasswordSignInAsync(user, password, false, false);
 
-        return await _tokenClaimsService.GetTokenAsync(user.UserName);;
+        return await _tokenClaimsService.GetTokenAsync(user.UserName);
+        ;
     }
 
     public async Task<string> AuthenticateUserAsync(string email, string password)
@@ -87,7 +88,8 @@ public class IdentityService : IIdentityService
             await _userManager.AddToRoleAsync(user, role);
         }
 
-        return await _tokenClaimsService.GetTokenAsync(user.UserName);;
+        return await _tokenClaimsService.GetTokenAsync(user.UserName);
+        ;
     }
 
     public async Task SendPasswordResetTokenAsync(string email, string linkToResetPassword)
@@ -147,7 +149,7 @@ public class IdentityService : IIdentityService
 
         await _userManager.RemovePasswordAsync(user);
         var result = await _userManager.AddPasswordAsync(user, newPassword);
-        
+
         if (!result.Succeeded)
             throw new InvalidPasswordException();
 
@@ -162,16 +164,16 @@ public class IdentityService : IIdentityService
 
         if (user == null)
             throw new UserNotFoundException(email);
-        
+
         var userExists = await _userManager.FindByEmailAsync(newEmail);
 
         if (userExists != null)
             throw new UserAlreadyExistsException(newEmail);
-        
+
         user.Email = newEmail;
         user.UserName = newEmail;
         await _userManager.UpdateAsync(user);
-        
+
         return await _tokenClaimsService.GetTokenAsync(user.UserName);
     }
 
@@ -181,7 +183,7 @@ public class IdentityService : IIdentityService
 
         if (user == null)
             throw new UserNotFoundException(email);
-        
+
         var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
 
         if (!result.Succeeded)

@@ -56,7 +56,7 @@ public class CatalogTypeController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        return Ok(await _service.CreateCatalogTypeAsync(model.TypeName, cancellationToken));
+        return Ok(await _service.CreateCatalogTypeAsync(model.Type, cancellationToken));
     }
 
     [HttpPut("{id}")]
@@ -69,9 +69,9 @@ public class CatalogTypeController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateCatalogTypeAsync(id, model.TypeName, cancellationToken);
+        await _service.UpdateCatalogTypeAsync(id, model.Type, cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpDelete("{id}")]
@@ -82,6 +82,6 @@ public class CatalogTypeController : ControllerBase
 
         await _service.DeleteCatalogTypeAsync(id, cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 }

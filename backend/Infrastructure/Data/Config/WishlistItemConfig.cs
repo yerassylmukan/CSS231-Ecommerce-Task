@@ -14,6 +14,10 @@ public class WishlistItemConfig : IEntityTypeConfiguration<WishlistItem>
 
         builder.Property(wi => wi.CatalogItemId).IsRequired();
 
+        builder.Property(wi => wi.ProductName).IsRequired();
+
+        builder.Property(wi => wi.PictureUrl).IsRequired();
+
         builder.HasOne(wi => wi.Wishlist)
             .WithMany(w => w.Items)
             .HasForeignKey(wi => wi.WishlistId)

@@ -34,9 +34,11 @@ builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 builder.Services.AddScoped<ICatalogItemService, CatalogItemService>();
-builder.Services.AddScoped<ICatalogItemReviewService, CatalogItemReviewService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ICatalogTypeService, CatalogTypeService>();
 builder.Services.AddScoped<ICatalogBrandService, CatalogBrandService>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

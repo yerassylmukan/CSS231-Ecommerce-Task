@@ -2,7 +2,7 @@
 
 namespace WebApi.Models;
 
-public class CreateCatalogItemRevirewModel
+public class CreateReviewModel
 {
     [Required] public string UserId { get; set; }
 

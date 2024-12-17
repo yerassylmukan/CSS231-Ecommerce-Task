@@ -7,25 +7,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationCore.Services;
 
-public class CatalogItemReviewService : ICatalogItemReviewService
+public class ReviewService : IReviewService
 {
     private readonly IApplicationDbContext _context;
 
-    public CatalogItemReviewService(IApplicationDbContext context)
+    public ReviewService(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<IEnumerable<CatalogItemReviewDTO>> GetCatalogItemReviewsAsync(CancellationToken cancellationToken)
+
+    public async Task<IEnumerable<CatalogItemReviewDTO>> GetReviewsAsync(int catalogItemId,
+        CancellationToken cancellationToken)
     {
-        var review = await _context.Reviews.ToListAsync(cancellationToken);
+        var review = await _context.Reviews.Where(r => r.CatalogItemId == catalogItemId).ToListAsync(cancellationToken);
 
         var result = review.Select(r => r.MapToDTO());
 
         return result;
     }
 
-    public async Task<CatalogItemReviewDTO> GetCatalogItemReviewByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<IEnumerable<CatalogItemReviewDTO>> GetReviewsByUserIdAsync(string userId,
+        CancellationToken cancellationToken)
+    {
+        var review = await _context.Reviews.Where(r => r.UserId == userId).ToListAsync(cancellationToken);
+
+        var result = review.Select(r => r.MapToDTO());
+
+        return result;
+    }
+
+    public async Task<CatalogItemReviewDTO> GetReviewByIdAsync(int id, CancellationToken cancellationToken)
     {
         var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 
@@ -35,31 +47,8 @@ public class CatalogItemReviewService : ICatalogItemReviewService
         return review.MapToDTO();
     }
 
-    public async Task<CatalogItemReviewDTO> GetCatalogItemReviewByUserIdAsync(string userId,
-        CancellationToken cancellationToken)
-    {
-        var review = await _context.Reviews.FirstOrDefaultAsync(r => r.UserId == userId, cancellationToken);
-
-        if (review == null)
-            throw new CatalogItemReviewDoesNotExistsException();
-
-        return review.MapToDTO();
-    }
-
-    public async Task<CatalogItemReviewDTO> GetCatalogItemReviewByCatalogItemIdAsync(int catalogItemId,
-        CancellationToken cancellationToken)
-    {
-        var review =
-            await _context.Reviews.FirstOrDefaultAsync(r => r.CatalogItemId == catalogItemId, cancellationToken);
-
-        if (review == null)
-            throw new CatalogItemReviewDoesNotExistsException();
-
-        return review.MapToDTO();
-    }
-
-    public async Task<CatalogItemReviewDTO> CreateCatalogItemReviewAsync(string userId, decimal rating,
-        string reviewText, int catalogItemId,
+    public async Task<CatalogItemReviewDTO> CreateReviewAsync(string userId, decimal rating, string reviewText,
+        int catalogItemId,
         CancellationToken cancellationToken)
     {
         var reviewExists = _context.Reviews.Any(r => r.UserId == userId && r.CatalogItemId == catalogItemId);
@@ -70,6 +59,12 @@ public class CatalogItemReviewService : ICatalogItemReviewService
             .FirstOrDefaultAsync(c => c.Id == catalogItemId, cancellationToken);
 
         if (item == null) throw new CatalogItemDoesNotExistsException(catalogItemId);
+
+        if (rating < 1 || rating > 5)
+            throw new ArgumentException("Rating must be between 1 and 5");
+
+        if (string.IsNullOrEmpty(reviewText))
+            throw new ArgumentException(nameof(reviewText));
 
         var review = new CatalogItemReview
         {
@@ -85,10 +80,11 @@ public class CatalogItemReviewService : ICatalogItemReviewService
         return review.MapToDTO();
     }
 
-    public async Task UpdateCatalogItemReviewAsync(int id, decimal rating, string reviewText,
+    public async Task UpdateReviewAsync(int id, string userId, decimal rating, string reviewText,
         CancellationToken cancellationToken)
     {
-        var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+        var review =
+            await _context.Reviews.FirstOrDefaultAsync(r => r.Id == id && r.UserId == userId, cancellationToken);
 
         if (review == null)
             throw new CatalogItemReviewDoesNotExistsException();
@@ -103,6 +99,9 @@ public class CatalogItemReviewService : ICatalogItemReviewService
 
         if (review.Rating != rating)
         {
+            if (rating < 1 || rating > 5)
+                throw new ArgumentException("Rating must be between 1 and 5");
+
             review.Rating = rating;
             isChanged = true;
         }
@@ -110,9 +109,10 @@ public class CatalogItemReviewService : ICatalogItemReviewService
         if (isChanged) await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteCatalogItemReviewAsync(int id, CancellationToken cancellationToken)
+    public async Task DeleteReviewAsync(int id, string userId, CancellationToken cancellationToken)
     {
-        var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+        var review =
+            await _context.Reviews.FirstOrDefaultAsync(r => r.Id == id && r.UserId == userId, cancellationToken);
 
         if (review == null)
             throw new CatalogItemReviewDoesNotExistsException();

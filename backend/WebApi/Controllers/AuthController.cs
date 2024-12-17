@@ -82,7 +82,7 @@ public class AuthController : ControllerBase
         await _identityService.SendPasswordResetTokenAsync(requestPasswordResetModel.Email,
             requestPasswordResetModel.LinkToResetPassword);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpPost]
@@ -97,36 +97,38 @@ public class AuthController : ControllerBase
 
         await _identityService.ResetPasswordAsync(resetPassword.Email, resetPassword.Code, resetPassword.NewPassword);
 
-        return NoContent();
+        return Ok();
     }
-    
+
     [HttpPost]
     [Authorize(Roles = "Admin,BasicUser")]
-    public async Task<ActionResult<string>> ChangeEmail([FromBody] ChangeEmailModel model, CancellationToken cancellationToken)
+    public async Task<ActionResult<string>> ChangeEmail([FromBody] ChangeEmailModel model,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        
+
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
-        
+
         var result = await _identityService.ChangeEmailAsync(model.OldEmail, model.NewEmail);
-        
+
         return Ok(result);
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,BasicUser")]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        
+
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
-        
+
         await _identityService.ChangePasswordAsync(model.Email, model.OldPassword, model.NewPassword);
-        
-        return NoContent();
+
+        return Ok();
     }
 }

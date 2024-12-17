@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebApi.Models;
+﻿namespace WebApi.Models;
 
 public class CreateCatalogTypeModel
 {
-    [Required] public string TypeName { get; set; }
+    public string Type { get; set; }
 }

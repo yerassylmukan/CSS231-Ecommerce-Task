@@ -6,8 +6,8 @@ using WebApi.Models;
 
 namespace WebApi.Controllers;
 
-[Authorize]
 [ApiController]
+[Authorize(Roles = "Admin,BasicUser")]
 [Route("api/[controller]/[action]")]
 public class ApplicationUserController : ControllerBase
 {

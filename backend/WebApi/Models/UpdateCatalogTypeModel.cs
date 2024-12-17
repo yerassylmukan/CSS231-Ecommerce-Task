@@ -4,5 +4,5 @@ namespace WebApi.Models;
 
 public class UpdateCatalogTypeModel
 {
-    [Required] public string TypeName { get; set; }
+    [Required] public string Type { get; set; }
 }

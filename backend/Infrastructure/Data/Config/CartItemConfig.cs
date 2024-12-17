@@ -16,6 +16,10 @@ public class CartItemConfig : IEntityTypeConfiguration<CartItem>
 
         builder.Property(ci => ci.Quantity).IsRequired();
 
+        builder.Property(ci => ci.PictureUrl).IsRequired();
+
+        builder.Property(ci => ci.ProductName).IsRequired();
+
         builder.Property(ci => ci.UnitPrice)
             .HasColumnType("decimal(18,2)")
             .IsRequired();

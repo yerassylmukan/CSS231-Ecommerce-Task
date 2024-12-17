@@ -10,19 +10,17 @@ namespace ApplicationCore.Services;
 public class CatalogItemService : ICatalogItemService
 {
     private readonly IApplicationDbContext _context;
-    private readonly IEmailSender _emailSender;
 
-    public CatalogItemService(IApplicationDbContext context, IEmailSender emailSender)
+    public CatalogItemService(IApplicationDbContext context)
     {
         _context = context;
-        _emailSender = emailSender;
     }
 
     public async Task<IEnumerable<CatalogItemDTO>> GetCatalogItemsAsync(CancellationToken cancellationToken)
     {
         var item = await _context.CatalogItems.Include(ci => ci.Reviews).ToListAsync(cancellationToken);
 
-        var result = item.Select(ci => ci.MapToDTO());
+        var result = item.Where(ci => ci.StockQuantity > 0).Select(ci => ci.MapToDTO());
 
         return result;
     }
@@ -76,6 +74,9 @@ public class CatalogItemService : ICatalogItemService
         string pictureUrl, int stockQuantity,
         int catalogTypeId, int catalogBrandId, CancellationToken cancellationToken)
     {
+        if (stockQuantity < 1)
+            throw new ArgumentException("Stock quantity cannot be less than 1.");
+
         var item = new CatalogItem
         {
             Name = name,
@@ -130,15 +131,14 @@ public class CatalogItemService : ICatalogItemService
 
         if (item == null) throw new CatalogItemDoesNotExistsException(id);
 
+        if (stockQuantity < 1)
+            throw new ArgumentException("Stock quantity cannot be less than 1.");
+
         if (item.StockQuantity != stockQuantity)
         {
             item.StockQuantity = stockQuantity;
             await _context.SaveChangesAsync(cancellationToken);
         }
-
-        if (item.StockQuantity < 1)
-            await _emailSender.EmailSendAsync("admin@gmail.com", $"Running out of product - {item.Name}",
-                $"I would like to inform you that the product with ID {item.Id} is running out.", cancellationToken);
     }
 
     public async Task UpdateCatalogItemPictureUrlAsync(int id, string pictureUrl, CancellationToken cancellationToken)

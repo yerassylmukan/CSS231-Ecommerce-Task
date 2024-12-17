@@ -1,6 +1,6 @@
-﻿namespace ApplicationCore.Entities;
+﻿namespace ApplicationCore.DTOs;
 
-public class WishlistItem
+public class WishlistItemDTO
 {
     public int Id { get; set; }
     public int CatalogItemId { get; set; }
@@ -8,5 +8,4 @@ public class WishlistItem
     public string PictureUrl { get; set; }
 
     public int WishlistId { get; set; }
-    public Wishlist Wishlist { get; set; } = null!;
 }

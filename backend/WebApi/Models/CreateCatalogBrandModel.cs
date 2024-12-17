@@ -4,5 +4,5 @@ namespace WebApi.Models;
 
 public class CreateCatalogBrandModel
 {
-    [Required] public string BandName { get; set; }
+    [Required] public string Brand { get; set; }
 }

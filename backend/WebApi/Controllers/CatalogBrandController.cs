@@ -56,7 +56,7 @@ public class CatalogBrandController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        return Ok(await _service.CreateCatalogBrandAsync(model.BandName, cancellationToken));
+        return Ok(await _service.CreateCatalogBrandAsync(model.Brand, cancellationToken));
     }
 
     [HttpPut("{id}")]
@@ -69,9 +69,9 @@ public class CatalogBrandController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateCatalogBrandAsync(id, model.BandName, cancellationToken);
+        await _service.UpdateCatalogBrandAsync(id, model.Brand, cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpDelete("{id}")]
@@ -82,6 +82,6 @@ public class CatalogBrandController : ControllerBase
 
         await _service.DeleteCatalogBrandAsync(id, cancellationToken);
 
-        return NoContent();
+        return Ok();
     }
 }
