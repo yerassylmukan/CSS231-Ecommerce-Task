@@ -68,6 +68,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost("{orderId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ConfirmOrder(int orderId, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
