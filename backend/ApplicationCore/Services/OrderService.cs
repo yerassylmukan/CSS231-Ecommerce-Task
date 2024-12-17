@@ -129,4 +129,18 @@ public class OrderService : IOrderService
             throw;
         }
     }
+
+    public async Task ConfirmOrderAsync(int orderId, CancellationToken cancellationToken)
+    {
+        var order = await _context.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
+        
+        if (order == null)
+        {
+            throw new OrderDoesNotExistsException(orderId);
+        }
+
+        var customerId = order.UserId;
+        
+        await _emailSender.EmailSendByUserIdAsync(customerId, $"Order Confirmation - Order #{order.Id}", $"Order ID: {order.Id}, Order Date: {order.OrderDate}, Delivery Time: {order.ShippingMethod.DeliveryTime}", cancellationToken);
+    }
 }

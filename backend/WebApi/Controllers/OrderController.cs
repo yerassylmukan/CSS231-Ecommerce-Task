@@ -65,4 +65,15 @@ public class OrderController : ControllerBase
 
         return Ok(await _service.CreateOrderAsync(userId, model.deliveryName, model.deliveryCost, model.deliveryTime, cancellationToken));
     }
+
+    [HttpPost("{orderId}")]
+    public async Task<IActionResult> ConfirmOrder(int orderId, CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+            return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
+        
+        await _service.ConfirmOrderAsync(orderId, cancellationToken);
+        
+        return Ok();
+    }
 }
