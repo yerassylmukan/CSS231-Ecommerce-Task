@@ -69,7 +69,7 @@ public class ReviewController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin,BasicUser")]
+    [Authorize(Roles = "BasicUser")]
     public async Task<IActionResult> UpdateReview(int id, [FromBody] UpdateReviewModel model,
         CancellationToken cancellationToken)
     {
