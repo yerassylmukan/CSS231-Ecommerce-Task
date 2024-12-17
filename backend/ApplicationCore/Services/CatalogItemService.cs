@@ -18,9 +18,9 @@ public class CatalogItemService : ICatalogItemService
 
     public async Task<IEnumerable<CatalogItemDTO>> GetCatalogItemsAsync(CancellationToken cancellationToken)
     {
-        var item = await _context.CatalogItems.Include(ci => ci.Reviews).ToListAsync(cancellationToken);
+        var items = await _context.CatalogItems.Include(ci => ci.Reviews).ToListAsync(cancellationToken);
 
-        var result = item.Where(ci => ci.StockQuantity > 0).Select(ci => ci.MapToDTO());
+        var result = items.Where(ci => ci.StockQuantity > 0).Select(ci => ci.MapToDTO());
 
         return result;
     }

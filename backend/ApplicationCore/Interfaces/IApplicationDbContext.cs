@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace ApplicationCore.Interfaces;
 
@@ -15,6 +16,8 @@ public interface IApplicationDbContext
     DbSet<WishlistItem> WishlistItems { get; set; }
     DbSet<Order> Orders { get; set; }
     DbSet<OrderItem> OrderItems { get; set; }
+
+    DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

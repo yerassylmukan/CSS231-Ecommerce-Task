@@ -39,6 +39,7 @@ builder.Services.AddScoped<ICatalogTypeService, CatalogTypeService>();
 builder.Services.AddScoped<ICatalogBrandService, CatalogBrandService>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

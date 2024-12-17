@@ -6,7 +6,7 @@ public class CartDoesNotExistsException : Exception
     {
     }
 
-    public CartDoesNotExistsException() : base("Cart with does not exists")
+    public CartDoesNotExistsException() : base("Cart does not exists")
     {
     }
 }
