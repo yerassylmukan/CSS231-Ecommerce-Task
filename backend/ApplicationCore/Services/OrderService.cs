@@ -91,7 +91,7 @@ public class OrderService : IOrderService
 
                     throw new OutOfStockException(item.Id);
                 }
-                
+
                 catalogItem.StockQuantity -= item.Quantity;
 
                 if (catalogItem.StockQuantity <= 0)
@@ -99,7 +99,7 @@ public class OrderService : IOrderService
                     await _emailSender.EmailSendAsync("admin@gmail.com", $"Running out of product - {catalogItem.Name}",
                         $"I would like to inform you that the product with ID {catalogItem.Id} is running out.",
                         cancellationToken);
-                    
+
                     catalogItem.StockQuantity = 0;
                 }
 
@@ -111,7 +111,7 @@ public class OrderService : IOrderService
                     ProductName = item.ProductName,
                     OrderId = order.Id
                 };
-                
+
                 _context.CatalogItems.Update(catalogItem);
                 _context.OrderItems.Add(orderItem);
                 order.Items.Add(orderItem);
@@ -132,15 +132,15 @@ public class OrderService : IOrderService
 
     public async Task ConfirmOrderAsync(int orderId, CancellationToken cancellationToken)
     {
-        var order = await _context.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
-        
-        if (order == null)
-        {
-            throw new OrderDoesNotExistsException(orderId);
-        }
+        var order = await _context.Orders.Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
+
+        if (order == null) throw new OrderDoesNotExistsException(orderId);
 
         var customerId = order.UserId;
-        
-        await _emailSender.EmailSendByUserIdAsync(customerId, $"Order Confirmation - Order #{order.Id}", $"Order ID: {order.Id}, Order Date: {order.OrderDate}, Delivery Time: {order.ShippingMethod.DeliveryTime}", cancellationToken);
+
+        await _emailSender.EmailSendByUserIdAsync(customerId, $"Order Confirmation - Order #{order.Id}",
+            $"Order ID: {order.Id}, Order Date: {order.OrderDate}, Delivery Time: {order.ShippingMethod.DeliveryTime}",
+            cancellationToken);
     }
 }

@@ -63,7 +63,8 @@ public class OrderController : ControllerBase
         if (currentUserId != userId)
             throw new ArgumentException("User does not belong to this user");
 
-        return Ok(await _service.CreateOrderAsync(userId, model.deliveryName, model.deliveryCost, model.deliveryTime, cancellationToken));
+        return Ok(await _service.CreateOrderAsync(userId, model.deliveryName, model.deliveryCost, model.deliveryTime,
+            cancellationToken));
     }
 
     [HttpPost("{orderId}")]
@@ -71,9 +72,9 @@ public class OrderController : ControllerBase
     {
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
-        
+
         await _service.ConfirmOrderAsync(orderId, cancellationToken);
-        
+
         return Ok();
     }
 }

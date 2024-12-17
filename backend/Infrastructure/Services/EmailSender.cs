@@ -7,9 +7,9 @@ namespace Infrastructure.Services;
 
 public class EmailSender : IEmailSender
 {
+    private readonly IApplicationUserService _applicationUserService;
     private readonly string _fromAddress;
     private readonly SmtpClient _smtpClient;
-    private readonly IApplicationUserService _applicationUserService;
 
     public EmailSender(IApplicationUserService applicationUserService)
     {
@@ -39,16 +39,34 @@ public class EmailSender : IEmailSender
         await sendEmailTask;
     }
 
-    public async Task EmailSendByUserIdAsync(string userId, string subject, string message, CancellationToken cancellationToken)
+    public async Task SendSupportAsync(string fromAddress, string subject, string message,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrEmpty(fromAddress))
+            throw new ArgumentException("Recipient email cannot be null or empty.", nameof(fromAddress));
+
+        var mailMessage = new MailMessage(fromAddress, "230107009@sdu.edu.kz", subject, message)
+        {
+            IsBodyHtml = true
+        };
+
+        var sendEmailTask = _smtpClient.SendMailAsync(mailMessage, cancellationToken);
+        await Task.WhenAny(sendEmailTask, Task.Delay(Timeout.Infinite, cancellationToken));
+
+        await sendEmailTask;
+    }
+
+    public async Task EmailSendByUserIdAsync(string userId, string subject, string message,
+        CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(userId))
             throw new ArgumentException("Recipient email cannot be null or empty.", nameof(userId));
-        
+
         var user = await _applicationUserService.GetUserDetailsByUserIdAsync(userId);
 
         if (user.Email == null)
             throw new UserNotFoundException();
-        
+
         var mailMessage = new MailMessage(_fromAddress, user.Email, subject, message)
         {
             IsBodyHtml = true
