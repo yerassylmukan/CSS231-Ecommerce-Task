@@ -29,7 +29,7 @@ public class ReviewController : ControllerBase
     }
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<CatalogItemReviewDTO>> GetReviewByUserId(string userId,
+    public async Task<ActionResult<IEnumerable<CatalogItemReviewDTO>>> GetReviewsByUserId(string userId,
         CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
@@ -39,7 +39,7 @@ public class ReviewController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<IEnumerable<CatalogItemReviewDTO>>> GetReviewsById(int id,
+    public async Task<ActionResult<CatalogItemReviewDTO>> GetReviewById(int id,
         CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
