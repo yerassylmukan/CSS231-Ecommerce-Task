@@ -1,4 +1,6 @@
-﻿using ApplicationCore.Interfaces;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
@@ -130,5 +132,53 @@ public class AuthController : ControllerBase
         await _identityService.ChangePasswordAsync(model.Email, model.OldPassword, model.NewPassword);
 
         return Ok();
+    }
+    
+    [HttpGet]
+    [Authorize]
+    public string GetCurrentUserId()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) Console.WriteLine("No user found or user is not authenticated.");
+        return userId;
+    }
+    
+    [HttpGet]
+    [Authorize]
+    public string GetCurrentUserName()
+    {
+        var userName = User.FindFirstValue(ClaimTypes.Name);
+        if (string.IsNullOrEmpty(userName)) Console.WriteLine("No user found or user is not authenticated.");
+        return userName;
+    }
+    
+    [HttpGet("{token}")]
+    public IActionResult GetPayload(string token)
+    {
+        if (string.IsNullOrEmpty(token))
+        {
+            return BadRequest("Token is required.");
+        }
+
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+
+            if (!handler.CanReadToken(token))
+            {
+                return BadRequest("The token is not in a valid JWT format.");
+            }
+
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var payload = jwtToken.Claims
+                .ToDictionary(claim => claim.Type, claim => (object)claim.Value);
+
+            return Ok(payload);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }
