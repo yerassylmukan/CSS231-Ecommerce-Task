@@ -2,18 +2,21 @@
 using System.Net.Mail;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
 
 public class EmailSender : IEmailSender
 {
-    private readonly IApplicationUserService _applicationUserService;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly string _fromAddress;
     private readonly SmtpClient _smtpClient;
 
-    public EmailSender(IApplicationUserService applicationUserService)
+    public EmailSender(UserManager<ApplicationUser> userManager)
     {
-        _applicationUserService = applicationUserService;
+        _userManager = userManager;
         _fromAddress = "230107009@sdu.edu.com";
         _smtpClient = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
         {
@@ -65,12 +68,20 @@ public class EmailSender : IEmailSender
         if (string.IsNullOrEmpty(userId))
             throw new ArgumentException("Recipient email cannot be null or empty.", nameof(userId));
 
-        var user = await _applicationUserService.GetUserDetailsByUserIdAsync(userId);
+        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken: cancellationToken);
 
-        if (user.Email == null)
-            throw new UserNotFoundException();
+        string email = "";
 
-        var mailMessage = new MailMessage(_fromAddress, user.Email, subject, message)
+        if (user != null)
+        {
+            email = user.Email;
+        }
+        else
+        {
+            email = "anonymous@sdu.edu.kz";
+        }
+
+        var mailMessage = new MailMessage(_fromAddress, email, subject, message)
         {
             IsBodyHtml = true
         };

@@ -10,7 +10,7 @@ public class CreateCatalogItemModel
 
     [Required] public decimal Price { get; set; }
 
-    [Required] public string PictureUrl { get; set; }
+    public string PictureUrl { get; set; }
 
     [Required] public int StockQuantity { get; set; }
 

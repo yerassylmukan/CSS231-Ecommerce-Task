@@ -11,6 +11,7 @@ public static class OrderMapper
         {
             Id = order.Id,
             UserId = order.UserId,
+            IsConfirmed = order.IsConfirmed,
             ShippingMethod = order.ShippingMethod,
             Items = order.Items.Select(oi => oi.MapToDTO()).ToList()
         };

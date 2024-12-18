@@ -68,6 +68,7 @@ public class OrderService : IOrderService
         var order = new Order
         {
             UserId = userId,
+            IsConfirmed = false,
             ShippingMethod = shippingMethod
         };
 
@@ -134,8 +135,13 @@ public class OrderService : IOrderService
     {
         var order = await _context.Orders.Include(o => o.Items)
             .FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
+        
+        order.IsConfirmed = true;
 
         if (order == null) throw new OrderDoesNotExistsException(orderId);
+        
+        _context.Orders.Update(order);
+        await _context.SaveChangesAsync(cancellationToken);
 
         var customerId = order.UserId;
 

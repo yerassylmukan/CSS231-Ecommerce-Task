@@ -13,6 +13,10 @@ public class OrderConfig : IEntityTypeConfiguration<Order>
         builder.Property(o => o.Id).ValueGeneratedOnAdd();
 
         builder.Property(o => o.UserId).IsRequired();
+        
+        builder.Property(o => o.IsConfirmed)
+            .IsRequired()
+            .HasDefaultValue(false);
 
         builder.OwnsOne(o => o.ShippingMethod, sm =>
         {
