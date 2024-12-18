@@ -18,6 +18,16 @@ public class ApplicationUserController : ControllerBase
         _service = service;
     }
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<IEnumerable<ApplicationUserDTO>>> GetAllUsers(CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+            return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
+
+        return Ok(await _service.GetUsersAsync(cancellationToken));
+    }
+
     [HttpGet("{userName}")]
     public async Task<ActionResult<ApplicationUserDTO>> GetUserDetailsByUserName(string userName,
         CancellationToken cancellationToken)

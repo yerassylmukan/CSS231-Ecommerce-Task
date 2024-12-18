@@ -1,7 +1,10 @@
-﻿namespace ApplicationCore.Interfaces;
+﻿using ApplicationCore.DTOs;
+
+namespace ApplicationCore.Interfaces;
 
 public interface IApplicationUserService
 {
+    Task<IEnumerable<ApplicationUserDTO>> GetUsersAsync(CancellationToken cancellationToken);
     Task<(string UserId, string FirstName, string LastName, string UserName, string Email, string profilePictureUrl,
             IEnumerable<string> Roles)>
         GetUserDetailsByUserNameAsync(string userName);

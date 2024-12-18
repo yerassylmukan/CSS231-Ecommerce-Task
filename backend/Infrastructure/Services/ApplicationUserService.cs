@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Exceptions;
+﻿using ApplicationCore.DTOs;
+using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,31 @@ public class ApplicationUserService : IApplicationUserService
     public ApplicationUserService(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
+    }
+
+    public async Task<IEnumerable<ApplicationUserDTO>> GetUsersAsync(CancellationToken cancellationToken)
+    {
+        var users = await _userManager.Users.ToListAsync();
+    
+        var usersDto = new List<ApplicationUserDTO>();
+
+        foreach (var user in users)
+        {
+            var userDto = new ApplicationUserDTO
+            {
+                UserId = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Email = user.Email,
+                ProfilePictureUrl = user.ProfilePictureUrl,
+                Roles = await _userManager.GetRolesAsync(user)
+            };
+
+            usersDto.Add(userDto);
+        }
+
+        return usersDto;
     }
 
     public async
