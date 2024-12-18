@@ -41,41 +41,71 @@ public class ApplicationUserService : IApplicationUserService
         return usersDto;
     }
 
-    public async
-        Task<(string UserId, string FirstName, string LastName, string UserName, string Email, string profilePictureUrl,
-            IEnumerable<string> Roles)>
-        GetUserDetailsByUserNameAsync(string userName)
+    public async Task<ApplicationUserDTO> GetUserDetailsByUserNameAsync(string userName)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
         if (user == null) throw new UserNotFoundException(userName);
 
         var roles = await _userManager.GetRolesAsync(user);
+        
+        var userDto = new ApplicationUserDTO
+        {
+            UserId = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            UserName = user.UserName,
+            Email = user.Email,
+            ProfilePictureUrl = user.ProfilePictureUrl,
+            Roles = roles
+        };
 
-        return (user.Id!, user.FirstName!, user.LastName!, user.UserName!, user.Email!, user.ProfilePictureUrl, roles);
+        return userDto;
     }
 
     public async
-        Task<(string UserId, string FirstName, string LastName, string UserName, string Email, string profilePictureUrl,
-            IEnumerable<string> Roles)>
+        Task<ApplicationUserDTO>
         GetUserDetailsByEmailAsync(string email)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
         if (user == null) throw new UserNotFoundException(email);
 
         var roles = await _userManager.GetRolesAsync(user);
+        
+        var userDto = new ApplicationUserDTO
+        {
+            UserId = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            UserName = user.UserName,
+            Email = user.Email,
+            ProfilePictureUrl = user.ProfilePictureUrl,
+            Roles = roles
+        };
 
-        return (user.Id!, user.FirstName!, user.LastName!, user.UserName!, user.Email!, user.ProfilePictureUrl, roles);
+        return userDto;
     }
 
     public async
-        Task<(string UserId, string FirstName, string LastName, string UserName, string Email, string profilePictureUrl,
-            IEnumerable<string> Roles)> GetUserDetailsByUserIdAsync(string userId)
+        Task<ApplicationUserDTO> GetUserDetailsByUserIdAsync(string userId)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        
         if (user == null) throw new UserNotFoundException(userId);
+        
         var roles = await _userManager.GetRolesAsync(user);
+        
+        var userDto = new ApplicationUserDTO
+        {
+            UserId = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            UserName = user.UserName,
+            Email = user.Email,
+            ProfilePictureUrl = user.ProfilePictureUrl,
+            Roles = roles
+        };
 
-        return (user.Id!, user.FirstName!, user.LastName!, user.UserName!, user.Email!, user.ProfilePictureUrl, roles);
+        return userDto;
     }
 
     public async Task UpdateProfileInformationAsync(string userId, string firstName, string lastName,
