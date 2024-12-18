@@ -18,7 +18,8 @@ public class CatalogItemService : ICatalogItemService
 
     public async Task<IEnumerable<CatalogItemDTO>> GetCatalogItemsAsync(CancellationToken cancellationToken)
     {
-        var items = await _context.CatalogItems.Include(ci => ci.Reviews).ToListAsync(cancellationToken);
+        var items = await _context.CatalogItems.Include(ci => ci.Reviews).Include(ci => ci.CatalogType)
+            .Include(ci => ci.CatalogBrand).ToListAsync(cancellationToken);
 
         var result = items.Where(ci => ci.StockQuantity > 0).Select(ci => ci.MapToDTO());
 
@@ -27,7 +28,8 @@ public class CatalogItemService : ICatalogItemService
 
     public async Task<CatalogItemDTO> GetCatalogItemByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var item = await _context.CatalogItems.Include(ci => ci.Reviews)
+        var item = await _context.CatalogItems.Include(ci => ci.Reviews).Include(ci => ci.CatalogType)
+            .Include(ci => ci.CatalogBrand)
             .FirstOrDefaultAsync(ci => ci.Id == id, cancellationToken);
 
         if (item == null) throw new CatalogItemDoesNotExistsException(id);
@@ -44,7 +46,8 @@ public class CatalogItemService : ICatalogItemService
         if (catalogType == null)
             throw new CatalogTypeDoesNotExistsException(catalogTypeName);
 
-        var items = _context.CatalogItems.Include(ci => ci.Reviews).Where(
+        var items = _context.CatalogItems.Include(ci => ci.Reviews).Include(ci => ci.CatalogType)
+            .Include(ci => ci.CatalogBrand).Where(
             ci => ci.CatalogType.Type == catalogTypeName);
 
         var itemsDto = items.Select(ci => ci.MapToDTO()).ToList();
@@ -60,7 +63,8 @@ public class CatalogItemService : ICatalogItemService
 
         if (brandExists == null) throw new CatalogBrandDoesNotExistsException(catalogBrandName);
 
-        var items = _context.CatalogItems.Include(ci => ci.Reviews).Where(
+        var items = _context.CatalogItems.Include(ci => ci.Reviews).Include(ci => ci.CatalogType)
+            .Include(ci => ci.CatalogBrand).Where(
             ci => ci.CatalogBrand.Brand == catalogBrandName);
 
         var itemsDto = items.Select(ci => ci.MapToDTO()).ToList();
@@ -72,8 +76,19 @@ public class CatalogItemService : ICatalogItemService
         string pictureUrl, int stockQuantity,
         int catalogTypeId, int catalogBrandId, CancellationToken cancellationToken)
     {
-        if (stockQuantity < 1)
+        var catalogType =
+            await _context.CatalogTypes.FirstOrDefaultAsync(ct => ct.Id == catalogTypeId, cancellationToken);
+
+        if (catalogType == null) throw new CatalogTypeDoesNotExistsException(catalogTypeId);
+
+        var catalogBrand =
+            await _context.CatalogBrands.FirstOrDefaultAsync(ct => ct.Id == catalogBrandId, cancellationToken);
+        
+        if (catalogBrand == null) throw new CatalogBrandDoesNotExistsException(catalogBrandId);
+        
+        if (stockQuantity < 1) 
             throw new ArgumentException("Stock quantity cannot be less than 1.");
+
 
         var item = new CatalogItem
         {

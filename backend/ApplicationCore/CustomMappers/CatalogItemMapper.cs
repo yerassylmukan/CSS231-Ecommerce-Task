@@ -15,6 +15,8 @@ public static class CatalogItemMapper
             Price = catalogItem.Price,
             PictureUrl = catalogItem.PictureUrl,
             StockQuantity = catalogItem.StockQuantity,
+            CatalogItemTypeName = catalogItem.CatalogType.Type,
+            CatalogItemBrandName = catalogItem.CatalogBrand.Brand,
             CatalogTypeId = catalogItem.CatalogTypeId,
             CatalogBrandId = catalogItem.CatalogBrandId,
             Reviews = catalogItem.Reviews.Select(r => r.MapToDTO()).ToList()

@@ -8,6 +8,8 @@ public class CatalogItemDTO
     public decimal Price { get; set; }
     public string PictureUrl { get; set; }
     public int StockQuantity { get; set; }
+    public string CatalogItemTypeName { get; set; }
+    public string CatalogItemBrandName { get; set; }
     public int CatalogTypeId { get; set; }
     public int CatalogBrandId { get; set; }
     public List<CatalogItemReviewDTO> Reviews { get; set; }
