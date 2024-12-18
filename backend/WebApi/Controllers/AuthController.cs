@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
         var token = await _identityService.CreateUserAsync(register.Email, register.Password,
-            register.FirstName, register.LastName, register.Email);
+            register.FirstName, register.LastName, register.ProfilePictureUrl);
 
         return Ok(token);
     }
