@@ -29,7 +29,7 @@ public class ReviewController : ControllerBase
     }
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<IEnumerable<CatalogItemReviewDTO>>> GetReviewsByUserId(string userId,
+    public async Task<ActionResult<CatalogItemReviewDTO>> GetReviewByUserId(string userId,
         CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)

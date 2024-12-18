@@ -42,9 +42,10 @@ public class EmailSender : IEmailSender
     public async Task SendSupportAsync(string firstName, string lastName, string subject, string message,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(message))
+        if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(subject) ||
+            string.IsNullOrEmpty(message))
             throw new ArgumentException("Cannot be null or empty.");
-        
+
         var subjectMessage = $"Message from: {firstName} {lastName}. Subject: {subject}";
 
         var mailMessage = new MailMessage("support@sdu.edu.kz", "230107009@sdu.edu.kz", subjectMessage, message)

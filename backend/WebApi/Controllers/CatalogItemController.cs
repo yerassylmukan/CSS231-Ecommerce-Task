@@ -36,7 +36,7 @@ public class CatalogItemController : ControllerBase
     }
 
     [HttpGet("{typeName}")]
-    public async Task<ActionResult<CatalogItemDTO>> GetCatalogItemsByTypeName(string typeName,
+    public async Task<ActionResult<IEnumerable<CatalogItemDTO>>> GetCatalogItemsByTypeName(string typeName,
         CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
@@ -46,7 +46,7 @@ public class CatalogItemController : ControllerBase
     }
 
     [HttpGet("{brandName}")]
-    public async Task<ActionResult<CatalogItemDTO>> GetCatalogItemsByBrandName(string brandName,
+    public async Task<ActionResult<IEnumerable<CatalogItemDTO>>> GetCatalogItemsByBrandName(string brandName,
         CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)

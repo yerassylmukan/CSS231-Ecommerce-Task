@@ -6,8 +6,12 @@ public interface ICatalogItemService
 {
     Task<IEnumerable<CatalogItemDTO>> GetCatalogItemsAsync(CancellationToken cancellationToken);
     Task<CatalogItemDTO> GetCatalogItemByIdAsync(int id, CancellationToken cancellationToken);
-    Task<CatalogItemDTO> GetCatalogItemsByTypeNameAsync(string catalogTypeName, CancellationToken cancellationToken);
-    Task<CatalogItemDTO> GetCatalogItemsByBrandNameAsync(string catalogBrandName, CancellationToken cancellationToken);
+
+    Task<IEnumerable<CatalogItemDTO>> GetCatalogItemsByTypeNameAsync(string catalogTypeName,
+        CancellationToken cancellationToken);
+
+    Task<IEnumerable<CatalogItemDTO>> GetCatalogItemsByBrandNameAsync(string catalogBrandName,
+        CancellationToken cancellationToken);
 
     Task<CatalogItemDTO> CreateCatalogItemAsync(string name, string description, decimal price,
         string pictureUrl, int stockQuantity, int catalogTypeId, int catalogBrandId,

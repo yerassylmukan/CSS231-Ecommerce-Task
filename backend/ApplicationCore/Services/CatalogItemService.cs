@@ -35,7 +35,7 @@ public class CatalogItemService : ICatalogItemService
         return item.MapToDTO();
     }
 
-    public async Task<CatalogItemDTO> GetCatalogItemsByTypeNameAsync(string catalogTypeName,
+    public async Task<IEnumerable<CatalogItemDTO>> GetCatalogItemsByTypeNameAsync(string catalogTypeName,
         CancellationToken cancellationToken)
     {
         var catalogType =
@@ -44,16 +44,15 @@ public class CatalogItemService : ICatalogItemService
         if (catalogType == null)
             throw new CatalogTypeDoesNotExistsException(catalogTypeName);
 
-        var item = await _context.CatalogItems.Include(ci => ci.Reviews).FirstOrDefaultAsync(
-            ci => ci.CatalogType.Type == catalogTypeName,
-            cancellationToken);
+        var items = _context.CatalogItems.Include(ci => ci.Reviews).Where(
+            ci => ci.CatalogType.Type == catalogTypeName);
 
-        if (item == null) throw new CatalogItemDoesNotExistsException(catalogTypeName);
+        var itemsDto = items.Select(ci => ci.MapToDTO()).ToList();
 
-        return item.MapToDTO();
+        return itemsDto.ToList();
     }
 
-    public async Task<CatalogItemDTO> GetCatalogItemsByBrandNameAsync(string catalogBrandName,
+    public async Task<IEnumerable<CatalogItemDTO>> GetCatalogItemsByBrandNameAsync(string catalogBrandName,
         CancellationToken cancellationToken)
     {
         var brandExists =
@@ -61,13 +60,12 @@ public class CatalogItemService : ICatalogItemService
 
         if (brandExists == null) throw new CatalogBrandDoesNotExistsException(catalogBrandName);
 
-        var item = await _context.CatalogItems.Include(ci => ci.Reviews).FirstOrDefaultAsync(
-            ci => ci.CatalogBrand.Brand == catalogBrandName,
-            cancellationToken);
+        var items = _context.CatalogItems.Include(ci => ci.Reviews).Where(
+            ci => ci.CatalogBrand.Brand == catalogBrandName);
 
-        if (item == null) throw new CatalogItemDoesNotExistsException(catalogBrandName);
+        var itemsDto = items.Select(ci => ci.MapToDTO()).ToList();
 
-        return item.MapToDTO();
+        return itemsDto.ToList();
     }
 
     public async Task<CatalogItemDTO> CreateCatalogItemAsync(string name, string description, decimal price,
@@ -115,7 +113,7 @@ public class CatalogItemService : ICatalogItemService
             isChanged = true;
         }
 
-        if (item.Price != price)
+        if (item.Price != price && price > 0)
         {
             item.Price = price;
             isChanged = true;
