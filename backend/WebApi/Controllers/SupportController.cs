@@ -25,7 +25,7 @@ public class SupportController : ControllerBase
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _emailSender.SendSupportAsync(model.FromAddress, model.Subject, model.Message, cancellationToken);
+        await _emailSender.SendSupportAsync(model.FistName, model.LastName,  model.Subject, model.Message, cancellationToken);
 
         return Ok();
     }

@@ -19,7 +19,7 @@ public class ApplicationUserService : IApplicationUserService
     public async Task<IEnumerable<ApplicationUserDTO>> GetUsersAsync(CancellationToken cancellationToken)
     {
         var users = await _userManager.Users.ToListAsync();
-    
+
         var usersDto = new List<ApplicationUserDTO>();
 
         foreach (var user in users)
@@ -47,7 +47,7 @@ public class ApplicationUserService : IApplicationUserService
         if (user == null) throw new UserNotFoundException(userName);
 
         var roles = await _userManager.GetRolesAsync(user);
-        
+
         var userDto = new ApplicationUserDTO
         {
             UserId = user.Id,
@@ -70,7 +70,7 @@ public class ApplicationUserService : IApplicationUserService
         if (user == null) throw new UserNotFoundException(email);
 
         var roles = await _userManager.GetRolesAsync(user);
-        
+
         var userDto = new ApplicationUserDTO
         {
             UserId = user.Id,
@@ -89,11 +89,11 @@ public class ApplicationUserService : IApplicationUserService
         Task<ApplicationUserDTO> GetUserDetailsByUserIdAsync(string userId)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        
+
         if (user == null) throw new UserNotFoundException(userId);
-        
+
         var roles = await _userManager.GetRolesAsync(user);
-        
+
         var userDto = new ApplicationUserDTO
         {
             UserId = user.Id,

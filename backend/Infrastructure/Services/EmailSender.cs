@@ -39,13 +39,15 @@ public class EmailSender : IEmailSender
         await sendEmailTask;
     }
 
-    public async Task SendSupportAsync(string fromAddress, string subject, string message,
+    public async Task SendSupportAsync(string firstName, string lastName, string subject, string message,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(fromAddress))
-            throw new ArgumentException("Recipient email cannot be null or empty.", nameof(fromAddress));
+        if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(message))
+            throw new ArgumentException("Cannot be null or empty.");
+        
+        var subjectMessage = $"Message from: {firstName} {lastName}. Subject: {subject}";
 
-        var mailMessage = new MailMessage(fromAddress, "230107009@sdu.edu.kz", subject, message)
+        var mailMessage = new MailMessage("support@sdu.edu.kz", "230107009@sdu.edu.kz", subjectMessage, message)
         {
             IsBodyHtml = true
         };
