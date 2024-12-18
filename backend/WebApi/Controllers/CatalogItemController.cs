@@ -87,51 +87,63 @@ public class CatalogItemController : ControllerBase
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCatalogItemStockQuantity(int id,
-        [FromBody] int stockQuantity, CancellationToken cancellationToken)
+        [FromBody] UpdateCatalogItemStockQuantityModel model, CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateCatalogItemStockQuantityAsync(id, stockQuantity, cancellationToken);
+        await _service.UpdateCatalogItemStockQuantityAsync(id, model.StockQuantity, cancellationToken);
 
         return Ok();
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateCatalogItemPictureUrl(int id, [FromBody] string pictureUrl,
+    public async Task<IActionResult> UpdateCatalogItemPictureUrl(int id, [FromBody] UpdateCatalogItemPictureUrlModel model,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateCatalogItemPictureUrlAsync(id, pictureUrl, cancellationToken);
+        await _service.UpdateCatalogItemPictureUrlAsync(id, model.PictureUrl, cancellationToken);
 
         return Ok();
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateCatalogType(int id, [FromBody] int catalogTypeId,
+    public async Task<IActionResult> UpdateCatalogType(int id, [FromBody] UpdateCatalogTypeModel model,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateCatalogTypeAsync(id, catalogTypeId, cancellationToken);
+        await _service.UpdateCatalogTypeAsync(id, model.CatalogTypeId, cancellationToken);
 
         return Ok();
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateCatalogBrand(int id, [FromBody] int catalogBrandId,
+    public async Task<IActionResult> UpdateCatalogBrand(int id, [FromBody] UpdateCatalogBrandModel model,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         if (cancellationToken.IsCancellationRequested)
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
-        await _service.UpdateCatalogBrandAsync(id, catalogBrandId, cancellationToken);
+        await _service.UpdateCatalogBrandAsync(id, model.CatalogBrandId, cancellationToken);
 
         return Ok();
     }

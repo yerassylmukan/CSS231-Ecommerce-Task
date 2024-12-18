@@ -60,7 +60,7 @@ public class CatalogBrandController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCatalogBrand(int id, [FromBody] UpdateCatalogBrandModel model,
+    public async Task<IActionResult> UpdateCatalogBrand(int id, [FromBody] UpdateBrandModel model,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)

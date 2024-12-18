@@ -60,7 +60,7 @@ public class CatalogTypeController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCatalogType(int id, [FromBody] UpdateCatalogTypeModel model,
+    public async Task<IActionResult> UpdateCatalogType(int id, [FromBody] UpdateTypeModel model,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
