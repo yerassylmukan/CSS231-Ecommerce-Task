@@ -49,7 +49,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost("{userId}")]
-    public async Task<ActionResult<OrderDTO>> CreateOrder(string userId, [FromBody] ShippingMethodModel model,
+    public async Task<ActionResult<OrderDTO>> CreateOrder(string userId, [FromBody] CreateOrderModel model,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -63,7 +63,8 @@ public class OrderController : ControllerBase
         if (currentUserId != userId)
             throw new ArgumentException("User does not belong to this user");
 
-        return Ok(await _service.CreateOrderAsync(userId, model.deliveryName, model.deliveryCost, model.deliveryTime,
+        return Ok(await _service.CreateOrderAsync(userId, model.DeliveryName, model.DeliveryCost, model.DeliveryTime,
+            model.AddressToShip, model.PhoneNumber,
             cancellationToken));
     }
 

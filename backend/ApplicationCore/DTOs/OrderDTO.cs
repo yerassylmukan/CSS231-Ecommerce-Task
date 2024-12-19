@@ -9,6 +9,7 @@ public class OrderDTO
     public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now;
     public bool IsConfirmed { get; set; }
     public ShippingMethod ShippingMethod { get; set; }
+    public ShippingDetails ShippingDetails { get; set; }
     public List<OrderItemDTO> Items { get; set; }
     public decimal TotalPrice => Items.Sum(item => item.TotalPrice) + ShippingMethod.Cost;
 }

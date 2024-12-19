@@ -48,7 +48,7 @@ public class CatalogItemService : ICatalogItemService
 
         var items = _context.CatalogItems.Include(ci => ci.Reviews).Include(ci => ci.CatalogType)
             .Include(ci => ci.CatalogBrand).Where(
-            ci => ci.CatalogType.Type == catalogTypeName);
+                ci => ci.CatalogType.Type == catalogTypeName);
 
         var itemsDto = items.Select(ci => ci.MapToDTO()).ToList();
 
@@ -65,7 +65,7 @@ public class CatalogItemService : ICatalogItemService
 
         var items = _context.CatalogItems.Include(ci => ci.Reviews).Include(ci => ci.CatalogType)
             .Include(ci => ci.CatalogBrand).Where(
-            ci => ci.CatalogBrand.Brand == catalogBrandName);
+                ci => ci.CatalogBrand.Brand == catalogBrandName);
 
         var itemsDto = items.Select(ci => ci.MapToDTO()).ToList();
 
@@ -83,10 +83,10 @@ public class CatalogItemService : ICatalogItemService
 
         var catalogBrand =
             await _context.CatalogBrands.FirstOrDefaultAsync(ct => ct.Id == catalogBrandId, cancellationToken);
-        
+
         if (catalogBrand == null) throw new CatalogBrandDoesNotExistsException(catalogBrandId);
-        
-        if (stockQuantity < 1) 
+
+        if (stockQuantity < 1)
             throw new ArgumentException("Stock quantity cannot be less than 1.");
 
 

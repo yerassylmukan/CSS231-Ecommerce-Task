@@ -53,7 +53,7 @@ public class OrderService : IOrderService
     }
 
     public async Task<OrderDTO> CreateOrderAsync(string userId, string deliveryName, decimal deliveryCost,
-        int deliveryTime, CancellationToken cancellationToken)
+        int deliveryTime, string addressToShip, string phoneNumber, CancellationToken cancellationToken)
     {
         var cart = await _context.Carts.Include(c => c.Items)
             .FirstOrDefaultAsync(c => c.UserId == userId, cancellationToken);
@@ -64,12 +64,14 @@ public class OrderService : IOrderService
         var items = cart.Items;
 
         var shippingMethod = new ShippingMethod(deliveryName, deliveryCost, TimeSpan.FromMinutes(deliveryTime));
+        var shippingDetails = new ShippingDetails(addressToShip, phoneNumber);
 
         var order = new Order
         {
             UserId = userId,
             IsConfirmed = false,
-            ShippingMethod = shippingMethod
+            ShippingMethod = shippingMethod,
+            ShippingDetails = shippingDetails
         };
 
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
@@ -135,18 +137,18 @@ public class OrderService : IOrderService
     {
         var order = await _context.Orders.Include(o => o.Items)
             .FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
-        
+
         order.IsConfirmed = true;
 
         if (order == null) throw new OrderDoesNotExistsException(orderId);
-        
+
         _context.Orders.Update(order);
         await _context.SaveChangesAsync(cancellationToken);
 
         var customerId = order.UserId;
 
         await _emailSender.EmailSendByUserIdAsync(customerId, $"Order Confirmation - Order #{order.Id}",
-            $"Order ID: {order.Id}, Order Date: {order.OrderDate}, Delivery Time: {order.ShippingMethod.DeliveryTime}",
+            $"Order ID: {order.Id}, Order Date: {order.OrderDate}, Delivery Time: {order.ShippingMethod.DeliveryTime}. Our manager will call you back to confirm the time.",
             cancellationToken);
     }
 }

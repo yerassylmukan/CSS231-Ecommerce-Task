@@ -9,6 +9,7 @@ public interface IOrderService
     Task<OrderDTO> GetOrderByUserIdAsync(string userId, CancellationToken cancellationToken);
 
     Task<OrderDTO> CreateOrderAsync(string userId, string deliveryName, decimal deliveryCost, int deliveryTime,
+        string addressToShip, string phoneNumber,
         CancellationToken cancellationToken);
 
     Task ConfirmOrderAsync(int orderId, CancellationToken cancellationToken);

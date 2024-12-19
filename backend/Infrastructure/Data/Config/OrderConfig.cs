@@ -13,7 +13,7 @@ public class OrderConfig : IEntityTypeConfiguration<Order>
         builder.Property(o => o.Id).ValueGeneratedOnAdd();
 
         builder.Property(o => o.UserId).IsRequired();
-        
+
         builder.Property(o => o.IsConfirmed)
             .IsRequired()
             .HasDefaultValue(false);
@@ -25,6 +25,13 @@ public class OrderConfig : IEntityTypeConfiguration<Order>
             sm.Property(s => s.DeliveryTime);
         });
 
+        builder.OwnsOne(o => o.ShippingDetails, sd =>
+        {
+            sd.Property(s => s.AddressToShip).HasMaxLength(256).IsRequired();
+            sd.Property(s => s.PhoneNumber).HasMaxLength(20).IsRequired();
+        });
+
         builder.Navigation(o => o.ShippingMethod).IsRequired();
+        builder.Navigation(o => o.ShippingDetails).IsRequired();
     }
 }

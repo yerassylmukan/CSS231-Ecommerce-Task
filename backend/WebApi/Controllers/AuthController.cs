@@ -133,7 +133,7 @@ public class AuthController : ControllerBase
 
         return Ok();
     }
-    
+
     [HttpGet]
     [Authorize]
     public string GetCurrentUserId()
@@ -142,7 +142,7 @@ public class AuthController : ControllerBase
         if (string.IsNullOrEmpty(userId)) Console.WriteLine("No user found or user is not authenticated.");
         return userId;
     }
-    
+
     [HttpGet]
     [Authorize]
     public string GetCurrentUserName()
@@ -151,23 +151,17 @@ public class AuthController : ControllerBase
         if (string.IsNullOrEmpty(userName)) Console.WriteLine("No user found or user is not authenticated.");
         return userName;
     }
-    
+
     [HttpGet("{token}")]
     public IActionResult GetPayload(string token)
     {
-        if (string.IsNullOrEmpty(token))
-        {
-            return BadRequest("Token is required.");
-        }
+        if (string.IsNullOrEmpty(token)) return BadRequest("Token is required.");
 
         try
         {
             var handler = new JwtSecurityTokenHandler();
 
-            if (!handler.CanReadToken(token))
-            {
-                return BadRequest("The token is not in a valid JWT format.");
-            }
+            if (!handler.CanReadToken(token)) return BadRequest("The token is not in a valid JWT format.");
 
             var jwtToken = handler.ReadJwtToken(token);
 

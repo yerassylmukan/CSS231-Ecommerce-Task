@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Net.Mail;
-using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -10,9 +9,9 @@ namespace Infrastructure.Services;
 
 public class EmailSender : IEmailSender
 {
-    private readonly UserManager<ApplicationUser> _userManager;
     private readonly string _fromAddress;
     private readonly SmtpClient _smtpClient;
+    private readonly UserManager<ApplicationUser> _userManager;
 
     public EmailSender(UserManager<ApplicationUser> userManager)
     {
@@ -68,20 +67,11 @@ public class EmailSender : IEmailSender
         if (string.IsNullOrEmpty(userId))
             throw new ArgumentException("Recipient email cannot be null or empty.", nameof(userId));
 
-        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken: cancellationToken);
+        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
-        string email = "";
+        if (user == null) return;
 
-        if (user != null)
-        {
-            email = user.Email;
-        }
-        else
-        {
-            email = "anonymous@sdu.edu.kz";
-        }
-
-        var mailMessage = new MailMessage(_fromAddress, email, subject, message)
+        var mailMessage = new MailMessage(_fromAddress, user.Email, subject, message)
         {
             IsBodyHtml = true
         };

@@ -13,6 +13,7 @@ public static class OrderMapper
             UserId = order.UserId,
             IsConfirmed = order.IsConfirmed,
             ShippingMethod = order.ShippingMethod,
+            ShippingDetails = order.ShippingDetails,
             Items = order.Items.Select(oi => oi.MapToDTO()).ToList()
         };
     }
