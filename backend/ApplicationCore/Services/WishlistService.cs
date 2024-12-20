@@ -55,7 +55,7 @@ public class WishlistService : IWishlistService
 
         if (item == null) throw new CatalogItemDoesNotExistsException(catalogItemId);
 
-        var alreadyExists = wishlist.Items.FirstOrDefault(w => w.Id == item.Id);
+        var alreadyExists = wishlist.Items.FirstOrDefault(w => w.CatalogItemId == item.Id);
 
         if (alreadyExists != null)
             throw new CatalogItemAlreadyInWishlistException(catalogItemId);
