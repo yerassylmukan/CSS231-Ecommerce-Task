@@ -58,17 +58,26 @@ public class CartService : ICartService
         if (item.StockQuantity < 1)
             throw new OutOfStockException(item.Id);
 
-        var cartItem = new CartItem
-        {
-            CatalogItemId = catalogItemId,
-            UnitPrice = item.Price,
-            Quantity = quantity,
-            CartId = cart.Id,
-            ProductName = item.Name,
-            PictureUrl = item.PictureUrl
-        };
+        var cartItem = cart.Items.FirstOrDefault(ci => ci.CatalogItemId == catalogItemId);
 
-        cart.Items.Add(cartItem);
+        if (cartItem != null)
+        {
+            cartItem.Quantity += quantity;
+        }
+        else
+        {
+            cartItem = new CartItem
+            {
+                CatalogItemId = catalogItemId,
+                UnitPrice = item.Price,
+                Quantity = quantity,
+                CartId = cart.Id,
+                ProductName = item.Name,
+                PictureUrl = item.PictureUrl
+            };
+            cart.Items.Add(cartItem);
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
 
         return cart.MapToDTO();
