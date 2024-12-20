@@ -7,7 +7,6 @@ using WebApi.Models;
 namespace WebApi.Controllers;
 
 [ApiController]
-[Authorize(Roles = "Admin")]
 [Route("api/[controller]/[action]")]
 public class CatalogBrandController : ControllerBase
 {
@@ -47,6 +46,7 @@ public class CatalogBrandController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<CatalogBrandDTO>> CreateCatalogBrand([FromBody] CreateCatalogBrandModel model,
         CancellationToken cancellationToken)
     {
@@ -60,6 +60,7 @@ public class CatalogBrandController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCatalogBrand(int id, [FromBody] UpdateBrandModel model,
         CancellationToken cancellationToken)
     {
@@ -75,6 +76,7 @@ public class CatalogBrandController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCatalogBrand(int id, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
