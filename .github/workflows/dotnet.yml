@@ -1,0 +1,22 @@
+﻿name: build
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+          include-prerelease: true
+
+      - name: Build with dotnet
+        run: dotnet build ./FinalProject.sln --configuration Release
+
+      - name: Test with dotnet
+        run: dotnet test ./FinalProject.sln --configuration Release
