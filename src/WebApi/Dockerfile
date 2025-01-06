@@ -7,7 +7,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 COPY . .
 
-WORKDIR "/app/backend/WebApi"
+WORKDIR "/app/src/WebApi"
 RUN dotnet restore
 
 RUN dotnet build -c Release -o /app/build

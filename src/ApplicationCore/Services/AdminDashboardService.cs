@@ -19,7 +19,7 @@ public class AdminDashboardService : IAdminDashboardService
         var salesData = await _context.Orders
             .Where(o => o.IsConfirmed)
             .SelectMany(o => o.Items)
-            .GroupBy(i => new { Month = i.Order.OrderDate.Month })
+            .GroupBy(i => new { i.Order.OrderDate.Month })
             .Select(g => new SalesReportDTO
             {
                 Month = GetMonthName(g.Key.Month),
@@ -30,7 +30,8 @@ public class AdminDashboardService : IAdminDashboardService
         return salesData;
     }
 
-    public async Task<IEnumerable<CustomerActivityLogDTO>> GetCustomerActivityLogsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<CustomerActivityLogDTO>> GetCustomerActivityLogsAsync(
+        CancellationToken cancellationToken)
     {
         var logs = await _context.Orders
             .Select(o => new CustomerActivityLogDTO
@@ -58,13 +59,10 @@ public class AdminDashboardService : IAdminDashboardService
 
         return inventory;
     }
-    
+
     private static string GetMonthName(int monthNumber)
     {
-        if (monthNumber < 1 || monthNumber > 12)
-        {
-            return "Invalid month number";
-        }
+        if (monthNumber < 1 || monthNumber > 12) return "Invalid month number";
 
         return CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber);
     }

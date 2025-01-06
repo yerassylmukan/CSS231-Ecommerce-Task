@@ -3,7 +3,7 @@
     image: webapi
     build:
       context: .
-      dockerfile: backend/WebApi/Dockerfile
+      dockerfile: src/WebApi/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:80

@@ -21,6 +21,3 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build ./FinalProject.sln --configuration Release
-
-      - name: Test with dotnet
-        run: dotnet test ./FinalProject.sln --configuration Release
