@@ -16,11 +16,6 @@ using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// To ensure that webapi successfully connects to the databases (db and identity),
-// I set a delay of 5 seconds to avoid errors during migration.
-// Docker depends_on does not wait for dependent containers to be fully ready to accept connections.
-await Task.Delay(5000);
-
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
 
@@ -113,12 +108,15 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddCors(options =>
-    options.AddPolicy("CorsPolicy", policyBuilder =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
     {
-        policyBuilder.WithOrigins("http://localhost:3000")
+        policy
+            .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader();
-    }));
+    });
+});
 
 var app = builder.Build();
 
@@ -139,7 +137,7 @@ using (var scope = app.Services.CreateScope())
         var applicationDbContext = services.GetRequiredService<ApplicationDbContext>();
 
         await AppIdentitySeedData.SeedAsync(identityContext, userManager, roleManager);
-        await ApplicationSeedData.SeedAsync(applicationDbContext, app.Logger);
+        if (applicationDbContext.Database.IsNpgsql()) applicationDbContext.Database.Migrate();
     }
     catch (Exception e)
     {
