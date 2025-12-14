@@ -148,8 +148,6 @@ using (var scope = app.Services.CreateScope())
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-app.UseHttpsRedirection();
-
 app.UseRouting();
 
 app.UseCors("CorsPolicy");
