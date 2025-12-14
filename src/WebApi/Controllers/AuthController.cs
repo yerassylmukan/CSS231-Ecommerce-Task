@@ -105,7 +105,7 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin,BasicUser")]
-    public async Task<ActionResult<string>> ChangeEmail([FromBody] ChangeEmailModel model,
+    public async Task<ActionResult<TokenDTO>> ChangeEmail([FromBody] ChangeEmailModel model,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -115,8 +115,8 @@ public class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status499ClientClosedRequest, "Request was cancelled by client");
 
         var result = await _identityService.ChangeEmailAsync(model.OldEmail, model.NewEmail);
-
-        return Ok(result);
+        
+        return Ok(new TokenDTO { AuthToken = result });
     }
 
     [HttpPost]
@@ -137,39 +137,72 @@ public class AuthController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public string GetCurrentUserId()
+    public ActionResult<CurrentUserIdDTO> GetCurrentUserId()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId)) Console.WriteLine("No user found or user is not authenticated.");
-        return userId;
+
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized("No user found or user is not authenticated.");
+
+        return Ok(new CurrentUserIdDTO
+        {
+            UserId = userId
+        });
     }
 
     [HttpGet]
     [Authorize]
-    public string GetCurrentUserName()
+    public ActionResult<CurrentUserNameDTO> GetCurrentUserName()
     {
         var userName = User.FindFirstValue(ClaimTypes.Name);
-        if (string.IsNullOrEmpty(userName)) Console.WriteLine("No user found or user is not authenticated.");
-        return userName;
+
+        if (string.IsNullOrEmpty(userName))
+            return Unauthorized("No user found or user is not authenticated.");
+
+        return Ok(new CurrentUserNameDTO
+        {
+            UserName = userName
+        });
     }
 
     [HttpGet("{token}")]
-    public IActionResult GetPayload(string token)
+    public ActionResult<JwtPayloadDTO> GetPayload(string token)
     {
-        if (string.IsNullOrEmpty(token)) return BadRequest("Token is required.");
+        if (string.IsNullOrWhiteSpace(token))
+            return BadRequest("Token is required.");
 
         try
         {
             var handler = new JwtSecurityTokenHandler();
+            if (!handler.CanReadToken(token))
+                return BadRequest("The token is not in a valid JWT format.");
 
-            if (!handler.CanReadToken(token)) return BadRequest("The token is not in a valid JWT format.");
+            var jwt = handler.ReadJwtToken(token);
 
-            var jwtToken = handler.ReadJwtToken(token);
+            string Get(params string[] types) =>
+                types.Select(t => jwt.Claims.FirstOrDefault(c => c.Type == t)?.Value)
+                    .FirstOrDefault(v => !string.IsNullOrWhiteSpace(v))
+                ?? string.Empty;
 
-            var payload = jwtToken.Claims
-                .ToDictionary(claim => claim.Type, claim => (object)claim.Value);
+            List<string> GetMany(params string[] types) =>
+                jwt.Claims.Where(c => types.Contains(c.Type)).Select(c => c.Value).ToList();
 
-            return Ok(payload);
+            long GetLong(string type) =>
+                long.TryParse(jwt.Claims.FirstOrDefault(c => c.Type == type)?.Value, out var v) ? v : 0;
+
+            var dto = new JwtPayloadDTO
+            {
+                NameId = Get("nameid", ClaimTypes.NameIdentifier),
+                Name   = Get("unique_name", "name", ClaimTypes.Name),
+                
+                Roles  = GetMany("role", ClaimTypes.Role),
+
+                NotBefore = GetLong(JwtRegisteredClaimNames.Nbf),
+                Expires   = GetLong(JwtRegisteredClaimNames.Exp),
+                IssuedAt  = GetLong(JwtRegisteredClaimNames.Iat)
+            };
+
+            return Ok(dto);
         }
         catch (Exception ex)
         {
