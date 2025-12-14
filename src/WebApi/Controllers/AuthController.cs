@@ -4,6 +4,7 @@ using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
+using ApplicationCore.DTOs;
 
 namespace WebApi.Controllers;
 
@@ -19,7 +20,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> Register([FromBody] RegisterModel register,
+    public async Task<ActionResult<TokenDTO>> Register([FromBody] RegisterModel register,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -31,11 +32,11 @@ public class AuthController : ControllerBase
         var token = await _identityService.CreateUserAsync(register.Email, register.Password,
             register.FirstName, register.LastName, register.ProfilePictureUrl);
 
-        return Ok(token);
+        return Ok(new TokenDTO { AuthToken = token });
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> Login([FromBody] LoginModel login,
+    public async Task<ActionResult<TokenDTO>> Login([FromBody] LoginModel login,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -46,18 +47,18 @@ public class AuthController : ControllerBase
 
         var token = await _identityService.AuthenticateUserAsync(login.Email, login.Password);
 
-        return Ok(token);
+        return Ok(new TokenDTO { AuthToken = token });
     }
 
     [HttpPost]
-    public ActionResult<string> AuthenticateAnonymousUser()
+    public ActionResult<TokenDTO> AuthenticateAnonymousUser()
     {
-        return Ok(_identityService.AuthenticateAnonymousUser());
+        return Ok(new TokenDTO { AuthToken = _identityService.AuthenticateAnonymousUser() });
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<string>> AddUserToRoles([FromBody] AddUserToRolesModel addUserToRolesModel,
+    public async Task<ActionResult<TokenDTO>> AddUserToRoles([FromBody] AddUserToRolesModel addUserToRolesModel,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -68,7 +69,7 @@ public class AuthController : ControllerBase
 
         var newToken = await _identityService.AddUserToRolesAsync(addUserToRolesModel.Email, addUserToRolesModel.Roles);
 
-        return Ok(newToken);
+        return Ok(new TokenDTO { AuthToken = newToken });
     }
 
     [HttpPost]
